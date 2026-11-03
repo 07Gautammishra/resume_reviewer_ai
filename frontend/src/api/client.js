@@ -1,32 +1,32 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// API CLIENT — Axios instance.
-// Disabled in the boilerplate (no backend yet). Uncomment when the backend
-// is connected, and delete the `apiClient = null` placeholder below.
-// ─────────────────────────────────────────────────────────────────────────────
 
-// import axios from "axios";
+import axios from "axios";
 
-// export const apiClient = axios.create({
-//   baseURL: "/api",
-//   withCredentials: true,
-//   headers: { "Content-Type": "application/json" },
-// });
+// Fall back to relative path "/api" in local dev so Vite proxy works,
+// or use explicit VITE_API_URL in production.
+const baseURL = import.meta.env.VITE_API_URL || "/api";
 
-// apiClient.interceptors.response.use(
-//   (res) => res,
-//   (err) => {
-//     const message =
-//       err.response?.data?.error?.message ||
-//       err.message ||
-//       "Request failed";
-//     return Promise.reject({
-//       status: err.response?.status,
-//       message,
-//       details: err.response?.data?.error?.details,
-//       original: err,
-//     });
-//   }
-// );
+export const apiClient = axios.create({
+  baseURL,
+  withCredentials: true, // Crucial for HTTP-only JWT cookies across domains
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-// Placeholder so existing imports from "./client" don't break while mocked.
-export const apiClient = null;
+apiClient.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const message =
+      err.response?.data?.error?.message ||
+      err.message ||
+      "Request failed";
+    return Promise.reject({
+      status: err.response?.status,
+      message,
+      details: err.response?.data?.error?.details,
+      original: err,
+    });
+  }
+);
+
+

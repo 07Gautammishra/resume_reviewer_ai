@@ -16,10 +16,25 @@ function resolveInitial() {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(resolveInitial);
 
+  // Sync theme changes to the DOM and localStorage
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
+
+  // Fix for Back-Forward Cache (bfcache): re-evaluate theme when going back
+  useEffect(() => {
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        const currentTheme = resolveInitial();
+        setTheme(currentTheme);
+        document.documentElement.setAttribute("data-theme", currentTheme);
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   const toggle = useCallback(
     () => setTheme((t) => (t === "light" ? "dark" : "light")),

@@ -1,1 +1,1 @@
-# resume_reviewer_ai
+# ScanMYCV

@@ -80,7 +80,7 @@ export function Navbar() {
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={toggle}
-              className="h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] border border-[var(--border)] transition-colors shrink-0"
+              className="h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] border border-[var(--border)] transition-colors shrink-0 cursor-pointer"
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
               <motion.div
@@ -133,7 +133,7 @@ export function Navbar() {
             {/* Mobile Drawer Trigger (Visible <= 925px) */}
             <button
               onClick={() => setOpen((o) => !o)}
-              className="[@media(min-width:926px)]:hidden h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] shrink-0 transition-colors"
+              className="[@media(min-width:926px)]:hidden h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] shrink-0 transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               {open ? <X size={18} /> : <Menu size={18} />}

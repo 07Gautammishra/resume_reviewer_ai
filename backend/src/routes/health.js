@@ -7,9 +7,11 @@ router.get("/", (req, res) => {
     const status = ["disconnected", "connected", "connecting", "disconnecting"];
     res.json({
         status: "ok",
+        uptime: `${Math.floor(process.uptime())}s`,
         db: status[mongoose.connection.readyState] || "unknown",
         timestamp: new Date().toISOString(),
-    })
-})
+    });
+});
+
 
 export default router;

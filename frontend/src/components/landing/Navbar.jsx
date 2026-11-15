@@ -6,6 +6,7 @@ import AILogo from "@/components/layout/AILogo";
 import { useTheme } from "@/context/ThemeContext";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { prefetchRoute } from "@/routes";
 
 const NAV_LINKS = [
   { label: "Features", href: "#features" },
@@ -33,6 +34,25 @@ export function Navbar() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Preload critical route chunks during browser idle time for instant transitions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (typeof window !== "undefined") {
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(() => {
+            prefetchRoute.login?.();
+            prefetchRoute.register?.();
+            prefetchRoute.dashboard?.();
+          });
+        } else {
+          prefetchRoute.login?.();
+          prefetchRoute.register?.();
+        }
+      }
+    }, 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -102,6 +122,7 @@ export function Navbar() {
             {!loading && user ? (
               <Link
                 to="/dashboard"
+                onMouseEnter={() => prefetchRoute.dashboard?.()}
                 className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)] text-xs sm:text-[13px] font-medium hover:bg-[var(--border)]/40 transition-colors shrink-0"
               >
                 <div className="h-6 w-6 rounded-full overflow-hidden bg-[var(--accent-soft)] text-[var(--accent-strong)] flex items-center justify-center text-xs font-semibold shrink-0">
@@ -118,6 +139,7 @@ export function Navbar() {
                 {/* Sign In Link */}
                 <Link
                   to="/login"
+                  onMouseEnter={() => prefetchRoute.login?.()}
                   className="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
                 >
                   Sign in
@@ -126,6 +148,7 @@ export function Navbar() {
                 {/* Get Started Button */}
                 <Link
                   to="/register"
+                  onMouseEnter={() => prefetchRoute.register?.()}
                   className="group inline-flex items-center justify-center gap-1.5 h-9 px-3.5 sm:px-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-xs sm:text-[13px] font-semibold hover:opacity-90 active:scale-[0.98] transition-all shrink-0"
                 >
                   <span>Get started</span>

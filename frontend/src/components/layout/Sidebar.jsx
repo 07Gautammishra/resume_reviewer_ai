@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import AILogo from "./AILogo";
+import { prefetchRoute } from "@/routes";
 
 const NAV = [
   { to: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -32,8 +33,13 @@ const LABEL_BASE =
   "group-hover/sidebar:opacity-100 group-hover/sidebar:translate-x-0 group-hover/sidebar:delay-100";
 
 function NavItem({ to, icon: Icon, label }) {
+  const handlePrefetch = () => {
+    const key = to.replace("/", "");
+    if (prefetchRoute[key]) prefetchRoute[key]();
+  };
+
   return (
-    <NavLink to={to} title={label} className="block">
+    <NavLink to={to} title={label} className="block" onMouseEnter={handlePrefetch}>
       {({ isActive }) => (
         <div
           className={cn(
@@ -71,8 +77,12 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
   );
 
   if (to) {
+    const handlePrefetch = () => {
+      const key = to.replace("/", "");
+      if (prefetchRoute[key]) prefetchRoute[key]();
+    };
     return (
-      <NavLink to={to} title={label} className="block">
+      <NavLink to={to} title={label} className="block" onMouseEnter={handlePrefetch}>
         {({ isActive }) => inner(isActive)}
       </NavLink>
     );

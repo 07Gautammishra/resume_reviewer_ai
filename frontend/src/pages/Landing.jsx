@@ -9,6 +9,7 @@ import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { Footer } from "@/components/landing/Footer";
 import PricingCards from "@/components/landing/PricingCards";
+import { ScrollNavButton } from "@/components/landing/ScrollNavButton";
 
 export default function Landing() {
   return (
@@ -25,6 +26,7 @@ export default function Landing() {
         <CTASection />
       </main>
       <Footer />
+      <ScrollNavButton />
     </div>
   );
 }

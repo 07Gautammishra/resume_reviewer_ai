@@ -49,15 +49,15 @@ export function ScoreEvolutionChart({ data, currentScore, delta }) {
         </div>
         <div className="text-right">
           <div className="text-xs text-[var(--ink-muted)]">Change vs V1</div>
-          <Badge tone={delta >= 0 ? "success" : "danger"} className="mt-1">
-            {delta >= 0 ? "+" : ""}
-            {delta} pts
+          <Badge tone={Number(delta) >= 0 ? "success" : "danger"} className="mt-1">
+            {Number(delta) >= 0 ? "+" : ""}
+            {delta ?? 0} pts
           </Badge>
         </div>
       </div>
 
       <div className="h-[180px] -mx-2">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="scoreFill" x1="0" y1="0" x2="0" y2="1">

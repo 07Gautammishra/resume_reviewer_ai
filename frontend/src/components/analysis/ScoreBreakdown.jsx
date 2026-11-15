@@ -19,7 +19,7 @@ export function ScoreBreakdown({ breakdown }) {
         </div>
       </CardHeader>
       <div className="h-[230px] -mx-2">
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
           <RadarChart data={data} outerRadius="75%">
             <PolarGrid stroke="var(--border)" />
             <PolarAngleAxis

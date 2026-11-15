@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Navigate, createBrowserRouter, Outlet, useRouteError, Link, ScrollRestoration } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Navigate, createBrowserRouter, Outlet, useRouteError, Link, ScrollRestoration, useLocation } from "react-router-dom";
 import { AlertCircle, RotateCcw, Home } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/context/AuthContext";
@@ -114,8 +114,40 @@ function ProtectedShell() {
   return <AppShell />;
 }
 
-// Global root layout providing industry-standard scroll restoration on route changes
+const ROUTE_TITLES = {
+  "/": "ScanMyCv · AI Resume Reviewer & ATS Optimizer",
+  "/login": "Sign In · ScanMyCv",
+  "/register": "Create Account · ScanMyCv",
+  "/dashboard": "Dashboard · ScanMyCv",
+  "/resumes": "Resumes · ScanMyCv",
+  "/insights": "Insights · ScanMyCv",
+  "/versions": "Versions · ScanMyCv",
+  "/history": "History · ScanMyCv",
+  "/settings": "Settings · ScanMyCv",
+  "/auth/callback": "Signing in... · ScanMyCv",
+};
+
+function resolveTitle(pathname) {
+  if (ROUTE_TITLES[pathname]) {
+    return ROUTE_TITLES[pathname];
+  }
+  if (pathname.startsWith("/resumes/") && pathname.endsWith("/export")) {
+    return "Export Resume · ScanMyCv";
+  }
+  if (pathname.startsWith("/resumes/")) {
+    return "Resume Analysis · ScanMyCv";
+  }
+  return "ScanMyCv";
+}
+
+// Global root layout providing industry-standard scroll restoration and dynamic tab titles
 function RootLayout() {
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = resolveTitle(location.pathname);
+  }, [location.pathname]);
+
   return (
     <>
       <ScrollRestoration />

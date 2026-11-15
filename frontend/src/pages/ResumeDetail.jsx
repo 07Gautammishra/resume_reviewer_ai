@@ -18,6 +18,7 @@ import { BulletRewrites } from "@/components/analysis/BulletRewrites";
 import { VersionSwitcher } from "@/components/resume/VersionSwitcher";
 import { DiffView } from "@/components/resume/DiffView";
 import { relativeTime } from "@/lib/utils";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   useResume,
   useAnalysisForVersion,
@@ -32,6 +33,8 @@ export default function ResumeDetail() {
   const { data, isLoading, error } = useResume(id);
   const resume = data?.resume;
   const versions = data?.versions || [];
+
+  useDocumentTitle(resume?.title ? `${resume.title} · Analysis` : "Resume Analysis");
 
   const [activeVersionId, setActiveVersionId] = useState(null);
   useEffect(() => {

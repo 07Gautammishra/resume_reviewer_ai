@@ -12,6 +12,7 @@ import { VersionSwitcher } from "@/components/resume/VersionSwitcher";
 import { ResumeDocument } from "@/components/export/ResumeDocument";
 import { useResume, useFullVersion } from "@/hooks/useResumes";
 import { useAuth } from "@/context/AuthContext";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function Export() {
   const { id } = useParams();
@@ -21,6 +22,8 @@ export default function Export() {
   const { data, isLoading, error } = useResume(id);
   const resume = data?.resume;
   const versions = data?.versions || [];
+
+  useDocumentTitle(resume?.title ? `Export ${resume.title}` : "Export Resume");
   const [activeVersionId, setActiveVersionId] = useState(null);
   useEffect(() => {
     if (!activeVersionId && versions.length) {

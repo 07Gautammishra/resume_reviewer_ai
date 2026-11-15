@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Play, Sparkles, ShieldCheck } from "lucide-react";
 import { DarkPanel } from "./DarkPanel";
 import { HeroDashboardPreview } from "./HeroDashboardPreview";
+import { useAuth } from "@/context/AuthContext";
 
 export function HeroSection() {
+  const { user } = useAuth();
   return (
     <section className="relative w-full">
       <DarkPanel
@@ -69,8 +71,8 @@ export function HeroSection() {
               className="flex flex-wrap items-center gap-3 mt-8"
             >
               <Link
-                to="/register"
-                className="group relative inline-flex items-center gap-2 h-12 px-5 rounded-full font-semibold text-[14px] text-white shadow-[0_10px_30px_-8px_rgba(143,179,156,0.5)] transition-all hover:shadow-[0_14px_36px_-8px_rgba(143,179,156,0.7)] active:scale-[0.98]"
+                to={user ? "/dashboard" : "/register"}
+                className="group relative inline-flex items-center gap-2 h-12 px-5 rounded-full font-semibold text-[14px] text-white shadow-[0_10px_30px_-8px_rgba(143,179,156,0.5)] transition-all hover:shadow-[0_14px_36px_-8px_rgba(143,179,156,0.7)] active:scale-[0.98] cursor-pointer"
                 style={{
                   background:
                     "linear-gradient(135deg, #8FB39C 0%, #5B7C6A 55%, #2F4A3A 100%)",
@@ -83,7 +85,7 @@ export function HeroSection() {
                       "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 50%)",
                   }}
                 />
-                <span className="relative">Upload your resume</span>
+                <span className="relative">{user ? "Go to Dashboard" : "Upload your resume"}</span>
                 <ArrowRight size={15} className="relative group-hover:translate-x-0.5 transition-transform" />
               </Link>
 

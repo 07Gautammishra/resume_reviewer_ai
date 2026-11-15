@@ -52,7 +52,9 @@ export default function Login() {
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="mb-12">
-          <AILogo size={48} />
+          <Link to="/" title="ScanMyCV Home" className="inline-block cursor-pointer">
+            <AILogo size={48} />
+          </Link>
         </div>
 
         <h1 className="font-display text-[34px] font-semibold tracking-tight text-[var(--ink)] leading-[1.05]">

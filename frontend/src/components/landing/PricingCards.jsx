@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 const plans = [
   {
@@ -55,6 +57,8 @@ const plans = [
 
 export const PricingCards = () => {
   const [selectedPlan, setSelectedPlan] = useState("pro");
+  const nav = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-12" id="pricing">
@@ -184,6 +188,10 @@ export const PricingCards = () => {
               {/* Action Button */}
               <motion.button
                 whileTap={{ scale: 0.98 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nav(user ? "/dashboard" : "/register");
+                }}
                 className="w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 border shadow-sm cursor-pointer"
                 style={
                   plan.popular || isSelected

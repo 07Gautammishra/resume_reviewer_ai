@@ -1,4 +1,6 @@
 import { Search, Sun, Moon } from "lucide-react";
+import { Link } from "react-router-dom";
+import AILogo from "@/components/layout/AILogo";
 import { IconButton } from "@/components/ui/IconButton";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
@@ -14,13 +16,22 @@ export function Topbar({ onOpenPalette }) {
 
   return (
     <header className="flex items-start justify-between gap-6 mb-8">
-      <div>
-        <h1 className="font-display text-[clamp(28px,3vw,38px)] font-semibold leading-tight text-[var(--ink)]">
-          Hello, {firstName}.
-        </h1>
-        <p className="text-sm text-[var(--ink-muted)] mt-1">
-          Sharpen your resume with calm, focused AI insights.
-        </p>
+      <div className="flex items-center gap-3">
+        <Link
+          to="/"
+          title="ScanMyCV Home"
+          className="[@media(min-width:851px)]:hidden flex items-center justify-center shrink-0 cursor-pointer"
+        >
+          <AILogo />
+        </Link>
+        <div>
+          <h1 className="font-display text-[clamp(24px,3vw,38px)] font-semibold leading-tight text-[var(--ink)]">
+            Hello, {firstName}.
+          </h1>
+          <p className="text-sm text-[var(--ink-muted)] mt-1">
+            Sharpen your resume with calm, focused AI insights.
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 shrink-0">

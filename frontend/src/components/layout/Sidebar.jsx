@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import {
   LayoutGrid,
   FileText,
@@ -103,9 +103,11 @@ export function Sidebar() {
         )}
       >
         <div className="flex flex-col items-center gap-6 w-full">
-          <div
+          <Link
+            to="/"
+            title="ScanMyCV Home"
             className={cn(
-              "flex items-center h-14 w-14 group-hover/sidebar:w-[200px]",
+              "flex items-center h-14 w-14 group-hover/sidebar:w-[200px] cursor-pointer",
               "transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
             )}
           >
@@ -122,7 +124,7 @@ export function Sidebar() {
             >
               ScanMyCv
             </span>
-          </div>
+          </Link>
 
           <nav className="flex flex-col items-center gap-1.5">
             {NAV.map((item) => (

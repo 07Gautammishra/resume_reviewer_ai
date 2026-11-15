@@ -50,7 +50,7 @@ export function Footer() {
       <div className="rounded-[28px] bg-[var(--surface)] border border-[var(--border)] shadow-card p-8 sm:p-12">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10">
           <div className="col-span-2">
-            <Link to="/" className="flex items-center gap-2.5">
+            <Link to="/" title="ScanMyCV Home" className="flex items-center gap-2.5 cursor-pointer">
               <AILogo />
               <span className="font-display text-[16px] font-semibold tracking-tight text-[var(--ink)]">
                 ScanMyCV

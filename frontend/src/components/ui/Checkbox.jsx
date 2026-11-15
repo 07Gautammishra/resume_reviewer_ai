@@ -9,7 +9,7 @@ export function Checkbox({ checked, onChange, className, label }) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        "inline-flex items-center gap-2 select-none focus-visible:outline-none",
+        "inline-flex items-center gap-2 select-none focus-visible:outline-none cursor-pointer",
         className
       )}
     >

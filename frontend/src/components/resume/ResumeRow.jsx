@@ -41,7 +41,7 @@ export function ResumeRow({ resume }) {
       <button
         onClick={remove}
         disabled={del.isPending}
-        className="h-9 w-9 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] hover:text-[var(--danger)] transition-colors"
+        className="h-9 w-9 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] hover:text-[var(--danger)] transition-colors cursor-pointer"
         title="Delete"
       >
         <Trash2 size={15} />

@@ -72,7 +72,7 @@ export default function Versions() {
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={cn(
-                "h-8 px-3.5 text-xs font-medium rounded-full transition-colors",
+                "h-8 px-3.5 text-xs font-medium rounded-full transition-colors cursor-pointer",
                 filter === f.key
                   ? "bg-[var(--ink)] text-[var(--bg)]"
                   : "text-[var(--ink-muted)] hover:text-[var(--ink)]"

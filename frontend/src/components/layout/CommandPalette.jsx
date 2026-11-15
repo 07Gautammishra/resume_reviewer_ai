@@ -129,7 +129,7 @@ export function CommandPalette({ open, onClose }) {
           onClose();
         }}
         className={cn(
-          "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors",
+          "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer",
           isActive
             ? "bg-[var(--accent-soft)] text-[var(--ink)]"
             : "hover:bg-[var(--surface-2)] text-[var(--ink)]"

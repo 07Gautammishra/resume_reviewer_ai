@@ -137,7 +137,7 @@ function DownloadVisual() {
             ATS-ready · 1 page
           </div>
         </div>
-        <button className="h-9 w-9 rounded-full bg-[var(--ink)] text-[var(--bg)] flex items-center justify-center shrink-0 transition-transform hover:-translate-y-0.5">
+        <button className="h-9 w-9 rounded-full bg-[var(--ink)] text-[var(--bg)] flex items-center justify-center shrink-0 transition-transform hover:-translate-y-0.5 cursor-pointer">
           <FileDown size={13} />
         </button>
       </div>

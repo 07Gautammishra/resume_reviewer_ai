@@ -97,7 +97,7 @@ function ThemeOption({ value, label, icon: Icon, current, onSelect }) {
       type="button"
       onClick={() => onSelect(value)}
       className={cn(
-        "relative flex-1 flex flex-col items-start gap-3 p-4 rounded-2xl border text-left transition-all",
+        "relative flex-1 flex flex-col items-start gap-3 p-4 rounded-2xl border text-left transition-all cursor-pointer",
         active
           ? "border-[var(--accent)] bg-[var(--accent-soft)]"
           : "border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)]"

@@ -9,7 +9,7 @@ export function VersionSwitcher({ versions, activeId, onChange }) {
           key={v._id}
           onClick={() => onChange(v._id)}
           className={cn(
-            "h-8 px-3 text-xs font-medium rounded-full transition-colors tabular",
+            "h-8 px-3 text-xs font-medium rounded-full transition-colors tabular cursor-pointer",
             activeId === v._id
               ? "bg-[var(--surface)] text-[var(--ink)] shadow-card"
               : "text-[var(--ink-muted)] hover:text-[var(--ink)]"

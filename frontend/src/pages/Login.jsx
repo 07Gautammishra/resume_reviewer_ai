@@ -84,7 +84,7 @@ export default function Login() {
             extra={
               <button
                 type="button"
-                className="text-xs text-[var(--accent-strong)] font-semibold hover:underline"
+                className="text-xs text-[var(--accent-strong)] font-semibold hover:underline cursor-pointer"
               >
                 Forgot?
               </button>

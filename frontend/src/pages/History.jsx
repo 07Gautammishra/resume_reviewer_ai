@@ -105,7 +105,7 @@ export default function History() {
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={cn(
-                "h-9 px-3 sm:px-3.5 text-xs font-medium rounded-xl sm:rounded-full transition-colors flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap",
+                "h-9 px-3 sm:px-3.5 text-xs font-medium rounded-xl sm:rounded-full transition-colors flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer",
                 isActive
                   ? "bg-[var(--ink)] text-[var(--bg)]"
                   : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] sm:hover:bg-transparent"
@@ -161,7 +161,7 @@ export default function History() {
                         e.resumeId && nav(`/resumes/${e.resumeId}`)
                       }
                       className={cn(
-                        "w-full text-left flex items-start gap-3 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors",
+                        "w-full text-left flex items-start gap-3 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors cursor-pointer",
                         idx > 0 && "border-t border-[var(--border)]"
                       )}
                     >

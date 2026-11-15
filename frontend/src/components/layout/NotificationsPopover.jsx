@@ -127,7 +127,7 @@ export function NotificationsPopover() {
                         <button
                           onClick={() => goTo(e)}
                           className={cn(
-                            "w-full flex items-start gap-3 px-5 py-3 text-left hover:bg-[var(--surface-2)] transition-colors",
+                            "w-full flex items-start gap-3 px-5 py-3 text-left hover:bg-[var(--surface-2)] transition-colors cursor-pointer",
                             idx > 0 && "border-t border-[var(--border)]"
                           )}
                         >
@@ -163,7 +163,7 @@ export function NotificationsPopover() {
                 navigate("/history");
                 setOpen(false);
               }}
-              className="w-full h-11 border-t border-[var(--border)] text-xs font-semibold text-[var(--accent-strong)] hover:bg-[var(--surface-2)] transition-colors"
+              className="w-full h-11 border-t border-[var(--border)] text-xs font-semibold text-[var(--accent-strong)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
             >
               View all activity
             </button>

@@ -105,7 +105,7 @@ export function UploadDropzone({ onUploaded, compact = false }) {
           </div>
           <button
             onClick={reset}
-            className="h-8 w-8 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)]"
+            className="h-8 w-8 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] cursor-pointer"
             disabled={upload.isPending}
           >
             <X size={14} />

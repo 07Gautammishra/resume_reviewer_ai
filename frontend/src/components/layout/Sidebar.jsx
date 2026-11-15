@@ -21,7 +21,7 @@ const NAV = [
 ];
 
 const ROW_BASE =
-  "relative flex items-center h-11 w-11 rounded-2xl overflow-hidden " +
+  "relative flex items-center h-11 w-11 rounded-2xl overflow-hidden cursor-pointer " +
   "group-hover/sidebar:w-[200px] " +
   "transition-[width,background-color,color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]";
 
@@ -244,7 +244,7 @@ export function Sidebar() {
         <button
           onClick={logout}
           title="Log out"
-          className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-[10px] font-medium text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors"
+          className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-[10px] font-medium text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
         >
           <div className="p-1.5 [@media(max-width:425px)]:p-2 rounded-xl flex items-center justify-center">
             <LogOut className="w-[18px] h-[18px] [@media(max-width:425px)]:w-[22px] [@media(max-width:425px)]:h-[22px]" />

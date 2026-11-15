@@ -184,7 +184,7 @@ export const PricingCards = () => {
               {/* Action Button */}
               <motion.button
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 border shadow-sm"
+                className="w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 border shadow-sm cursor-pointer"
                 style={
                   plan.popular || isSelected
                     ? {

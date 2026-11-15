@@ -123,7 +123,7 @@ function ToastViewport({ toasts, dismiss }) {
               </div>
               <button
                 onClick={() => dismiss(t.id)}
-                className="h-7 w-7 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] shrink-0"
+                className="h-7 w-7 rounded-full hover:bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] shrink-0 cursor-pointer"
                 aria-label="Dismiss"
               >
                 <X size={13} />

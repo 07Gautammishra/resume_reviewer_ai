@@ -28,6 +28,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { useInsights } from "@/hooks/useAnalytics";
+import { cn } from "@/lib/utils";
 
 const SEV_TONE = { low: "neutral", medium: "warning", midium: "warning", high: "danger" };
 const SEV_ICON_STYLE = {

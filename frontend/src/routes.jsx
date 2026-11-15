@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
-import { Navigate, createBrowserRouter, Outlet } from "react-router-dom";
+import { Navigate, createBrowserRouter, Outlet, useRouteError, Link } from "react-router-dom";
+import { AlertCircle, RotateCcw, Home } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/context/AuthContext";
 
@@ -13,6 +14,41 @@ function RouteLoadingFallback() {
           <div className="absolute inset-0 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
         </div>
         <span className="text-xs font-mono tracking-wider uppercase opacity-75">Loading...</span>
+      </div>
+    </div>
+  );
+}
+
+// Enterprise-grade fallback when an unhandled route error occurs
+function RouteErrorBoundary() {
+  const error = useRouteError();
+  const errorMessage = error?.statusText || error?.message || "An unexpected application error occurred.";
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] p-4 text-[var(--ink)]">
+      <div className="max-w-md w-full rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 shadow-card text-center">
+        <div className="w-12 h-12 rounded-2xl bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/25 flex items-center justify-center mx-auto mb-4">
+          <AlertCircle size={24} strokeWidth={2.2} />
+        </div>
+        <h2 className="text-lg font-semibold tracking-tight text-[var(--ink)] mb-2">Something went wrong</h2>
+        <p className="text-xs text-[var(--ink-muted)] mb-6 leading-relaxed font-mono bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)] text-left overflow-auto max-h-24">
+          {errorMessage}
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-xs font-medium text-[var(--ink)] hover:bg-[var(--border)]/40 transition-colors cursor-pointer"
+          >
+            <RotateCcw size={14} /> Reload
+          </button>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            <Home size={14} /> Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -79,12 +115,13 @@ function ProtectedShell() {
 }
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Landing /> },
-  { path: "auth/callback", element: <AuthCallback /> },
+  { path: "/", element: <Landing />, errorElement: <RouteErrorBoundary /> },
+  { path: "auth/callback", element: <AuthCallback />, errorElement: <RouteErrorBoundary /> },
 
   // Public routes (guests only)
   {
     element: <PublicOnlyRoute />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
@@ -95,6 +132,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <ProtectedShell />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "resumes", element: <Resumes /> },

@@ -57,6 +57,7 @@ const plans = [
 
 export const PricingCards = () => {
   const [selectedPlan, setSelectedPlan] = useState("pro");
+  const [hoveredPlan, setHoveredPlan] = useState(null);
   const nav = useNavigate();
   const { user } = useAuth();
 
@@ -89,25 +90,27 @@ export const PricingCards = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
         {plans.map((plan) => {
           const isSelected = selectedPlan === plan.id;
+          const isHovered = hoveredPlan === plan.id;
+          const isHighlighted = hoveredPlan ? isHovered : (plan.popular || isSelected);
 
           return (
             <motion.div
               key={plan.id}
               onClick={() => setSelectedPlan(plan.id)}
+              onMouseEnter={() => setHoveredPlan(plan.id)}
+              onMouseLeave={() => setHoveredPlan(null)}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="relative flex flex-col justify-between rounded-2xl p-6 sm:p-8 cursor-pointer border transition-all duration-300"
               style={{
-                background: plan.popular
+                background: isHighlighted
                   ? `linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%)`
                   : "var(--surface)",
-                borderColor: plan.popular
+                borderColor: isHighlighted
                   ? "var(--accent)"
-                  : isSelected
-                  ? "var(--accent-strong)"
                   : "var(--border)",
-                boxShadow: plan.popular
-                  ? "var(--shadow-hover)"
+                boxShadow: isHighlighted
+                  ? "0 0 0 2px var(--accent), var(--shadow-hover)"
                   : "var(--shadow-card)",
               }}
             >
@@ -118,8 +121,8 @@ export const PricingCards = () => {
                     className="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border"
                     style={{
                       backgroundColor: "var(--accent)",
-                      color: "var(--surface)",
-                      borderColor: "var(--accent-strong)",
+                      color: "var(--bg)",
+                      borderColor: "var(--accent)",
                     }}
                   >
                     Most Popular
@@ -192,13 +195,13 @@ export const PricingCards = () => {
                   e.stopPropagation();
                   nav(user ? "/dashboard" : "/register");
                 }}
-                className="w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 border shadow-sm cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-200 border shadow-sm cursor-pointer"
                 style={
-                  plan.popular || isSelected
+                  isHighlighted
                     ? {
-                        backgroundColor: "var(--accent-hero)",
-                        color: "#FFFFFF",
-                        borderColor: "var(--accent-hero-2)",
+                        backgroundColor: "var(--accent)",
+                        color: "var(--bg)",
+                        borderColor: "var(--accent)",
                       }
                     : {
                         backgroundColor: "var(--surface-2)",

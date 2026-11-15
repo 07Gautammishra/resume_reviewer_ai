@@ -50,10 +50,10 @@ export default function Dashboard() {
     return (
       <EmptyState
         icon={UploadCloud}
-        title="Welcome — let's roast your resume"
+        title="Welcome — let's scan your resume"
         description="Upload a PDF to get an instant ATS score, fixable issues, your strengths, and AI-rewritten bullets."
         action={
-          <Button variant="accent" size="lg" onClick={() => nav("/resumes")}>
+          <Button variant="accent" size="lg" className="shadow-md" onClick={() => nav("/resumes")}>
             Upload your first resume
           </Button>
         }

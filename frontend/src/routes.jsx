@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Navigate, createBrowserRouter, Outlet, useRouteError, Link } from "react-router-dom";
+import { Navigate, createBrowserRouter, Outlet, useRouteError, Link, ScrollRestoration } from "react-router-dom";
 import { AlertCircle, RotateCcw, Home } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/context/AuthContext";
@@ -114,36 +114,49 @@ function ProtectedShell() {
   return <AppShell />;
 }
 
+// Global root layout providing industry-standard scroll restoration on route changes
+function RootLayout() {
+  return (
+    <>
+      <ScrollRestoration />
+      <Outlet />
+    </>
+  );
+}
+
 export const router = createBrowserRouter([
-  { path: "/", element: <Landing />, errorElement: <RouteErrorBoundary /> },
-  { path: "auth/callback", element: <AuthCallback />, errorElement: <RouteErrorBoundary /> },
-
-  // Public routes (guests only)
   {
-    element: <PublicOnlyRoute />,
+    element: <RootLayout />,
     errorElement: <RouteErrorBoundary />,
     children: [
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      { path: "/", element: <Landing /> },
+      { path: "auth/callback", element: <AuthCallback /> },
+
+      // Public routes (guests only)
+      {
+        element: <PublicOnlyRoute />,
+        children: [
+          { path: "login", element: <Login /> },
+          { path: "register", element: <Register /> },
+        ],
+      },
+
+      // Protected routes (logged-in users only)
+      {
+        element: <ProtectedShell />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "resumes", element: <Resumes /> },
+          { path: "resumes/:id", element: <ResumeDetail /> },
+          { path: "resumes/:id/export", element: <ExportPage /> },
+          { path: "insights", element: <Insights /> },
+          { path: "versions", element: <Versions /> },
+          { path: "history", element: <History /> },
+          { path: "settings", element: <Settings /> },
+        ],
+      },
+
+      { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
-
-  // Protected routes (logged-in users only)
-  {
-    path: "/",
-    element: <ProtectedShell />,
-    errorElement: <RouteErrorBoundary />,
-    children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "resumes", element: <Resumes /> },
-      { path: "resumes/:id", element: <ResumeDetail /> },
-      { path: "resumes/:id/export", element: <ExportPage /> },
-      { path: "insights", element: <Insights /> },
-      { path: "versions", element: <Versions /> },
-      { path: "history", element: <History /> },
-      { path: "settings", element: <Settings /> },
-    ],
-  },
-
-  { path: "*", element: <Navigate to="/" replace /> },
 ]);

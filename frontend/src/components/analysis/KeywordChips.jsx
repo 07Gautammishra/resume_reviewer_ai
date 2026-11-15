@@ -1,28 +1,53 @@
+import { useState } from "react";
 import { Check, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { CopyButton } from "@/components/ui/CopyButton";
+import { copyToClipboard } from "@/lib/utils";
 
 function Chip({ children, tone }) {
+  const [copied, setCopied] = useState(false);
+  const text = String(children || "");
+
+  const handleClick = async () => {
+    if (!text) return;
+    const ok = await copyToClipboard(text);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
+
   if (tone === "present") {
     return (
-      <span className="inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] text-[12px] font-semibold transition-transform hover:-translate-y-px">
-        <span className="h-4 w-4 rounded-full bg-[var(--accent-strong)] text-white flex items-center justify-center">
+      <button
+        type="button"
+        onClick={handleClick}
+        title={copied ? "Copied to clipboard!" : `Click to copy "${text}"`}
+        className="inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] text-[12px] font-semibold transition-all hover:-translate-y-px cursor-pointer select-none outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]"
+      >
+        <span className="h-4 w-4 rounded-full bg-[var(--accent-strong)] text-white flex items-center justify-center shrink-0">
           <Check size={9} strokeWidth={3.5} />
         </span>
-        {children}
-      </span>
+        <span>{copied ? "Copied!" : children}</span>
+      </button>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[#F8E3E0]/70 text-[var(--danger)] text-[12px] font-semibold transition-transform hover:-translate-y-px">
-      <span className="h-4 w-4 rounded-full bg-[var(--danger)] text-white flex items-center justify-center">
+    <button
+      type="button"
+      onClick={handleClick}
+      title={copied ? "Copied to clipboard!" : `Click to copy "${text}"`}
+      className="inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[#F8E3E0]/70 text-[var(--danger)] text-[12px] font-semibold transition-all hover:-translate-y-px cursor-pointer select-none outline-none focus-visible:ring-1 focus-visible:ring-[var(--danger)]"
+    >
+      <span className="h-4 w-4 rounded-full bg-[var(--danger)] text-white flex items-center justify-center shrink-0">
         <X size={9} strokeWidth={3.5} />
       </span>
-      {children}
-    </span>
+      <span>{copied ? "Copied!" : children}</span>
+    </button>
   );
 }
 
-function SectionHeader({ tone, label, count }) {
+function SectionHeader({ tone, label, count, copyText, copyLabel }) {
   const isPresent = tone === "present";
   return (
     <div className="flex items-center gap-2.5 mb-3">
@@ -40,6 +65,15 @@ function SectionHeader({ tone, label, count }) {
         {count}
       </span>
       <div className="flex-1 h-px bg-[var(--border)]" />
+      {copyText && count > 0 && (
+        <CopyButton
+          text={copyText}
+          label={copyLabel || "Copy all"}
+          copiedLabel="Copied all!"
+          showText={true}
+          className="h-6 px-2.5 rounded-lg bg-[var(--surface-2)] hover:bg-[var(--surface)] border border-[var(--border)] text-[11px] shadow-sm"
+        />
+      )}
     </div>
   );
 }
@@ -149,7 +183,13 @@ export function KeywordChips({ present = [], missing = [] }) {
       {/* Present */}
       <div className="space-y-5">
         <div>
-          <SectionHeader tone="present" label="Present" count={present.length} />
+          <SectionHeader
+            tone="present"
+            label="Present"
+            count={present.length}
+            copyText={present.join(", ")}
+            copyLabel="Copy all"
+          />
           {present.length ? (
             <div className="flex flex-wrap gap-1.5">
               {present.map((k) => (
@@ -164,7 +204,13 @@ export function KeywordChips({ present = [], missing = [] }) {
         </div>
 
         <div>
-          <SectionHeader tone="missing" label="Missing" count={missing.length} />
+          <SectionHeader
+            tone="missing"
+            label="Missing"
+            count={missing.length}
+            copyText={missing.join(", ")}
+            copyLabel="Copy all missing"
+          />
           {missing.length ? (
             <div className="flex flex-wrap gap-1.5">
               {missing.map((k) => (

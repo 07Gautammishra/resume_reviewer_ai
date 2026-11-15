@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { ArrowRight, Loader2, Sparkles, Wand2, Info } from "lucide-react";
+import { CopyButton } from "@/components/ui/CopyButton";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -260,15 +261,22 @@ export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
                       "color-mix(in srgb, var(--accent) 30%, transparent)",
                   }}
                 >
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Sparkles
-                      size={10}
-                      strokeWidth={2.5}
-                      className="text-[var(--accent-strong)]"
-                    />
-                    <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--accent-strong)]">
-                      Rewritten
+                  <div className="flex items-center justify-between gap-1.5 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles
+                        size={10}
+                        strokeWidth={2.5}
+                        className="text-[var(--accent-strong)]"
+                      />
+                      <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--accent-strong)]">
+                        Rewritten
+                      </div>
                     </div>
+                    <CopyButton
+                      text={r.rewritten}
+                      showText={true}
+                      className="h-6 px-2.5 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] text-[11px] shadow-sm"
+                    />
                   </div>
                   <div className="text-[13.5px] text-[var(--ink)] leading-relaxed font-medium">
                     {r.rewritten}

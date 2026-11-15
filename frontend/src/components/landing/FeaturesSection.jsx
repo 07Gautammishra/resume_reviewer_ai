@@ -90,7 +90,7 @@ export function FeaturesSection() {
             <span
               style={{
                 backgroundImage:
-                  "linear-gradient(120deg, #5B7C6A 0%, #2F4A3A 60%, #5B7C6A 100%)",
+                  "linear-gradient(120deg, var(--accent) 0%, var(--accent-strong) 60%, var(--accent) 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -141,13 +141,7 @@ export function FeaturesSection() {
             <div className="relative p-5 sm:p-6">
               <div className="flex items-start gap-3">
                 <div
-                  className="h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-[1.06] transition-transform duration-300 text-[var(--accent-strong)]"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #EEF5EF 0%, #D9E7DD 100%)",
-                    boxShadow:
-                      "inset 0 1px 0 0 rgba(255,255,255,0.7), 0 1px 2px rgba(47,74,58,0.06)",
-                  }}
+                  className="h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-[1.06] transition-transform duration-300 bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/20 shadow-sm"
                 >
                   <f.icon size={17} strokeWidth={2.25} />
                 </div>
@@ -298,7 +292,7 @@ function KeywordsPreview() {
         {missing.map((k) => (
           <span
             key={k}
-            className="px-2 py-0.5 rounded-full bg-[#F8E3E0] text-[var(--danger)] text-[10px] font-semibold"
+            className="px-2 py-0.5 rounded-full bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/20 text-[10px] font-semibold"
           >
             + {k}
           </span>
@@ -339,19 +333,19 @@ function VersionsPreview() {
 function DiffPreview() {
   return (
     <div className="rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] p-3 space-y-1 font-mono text-[11px]">
-      <div className="flex gap-2 px-2 py-1 rounded-md bg-[#F8E3E0]/50">
-        <span className="text-[var(--danger)] font-bold w-3">−</span>
+      <div className="flex gap-2 px-2 py-1 rounded-md bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/20">
+        <span className="font-bold w-3">−</span>
         <span className="text-[var(--ink-muted)] line-through">
           helped team
         </span>
       </div>
-      <div className="flex gap-2 px-2 py-1 rounded-md bg-[var(--accent-soft)]/60">
-        <span className="text-[var(--success)] font-bold w-3">+</span>
-        <span className="text-[var(--ink)]">led 4-person frontend pod</span>
+      <div className="flex gap-2 px-2 py-1 rounded-md bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/20">
+        <span className="font-bold w-3">+</span>
+        <span>led 4-person frontend pod</span>
       </div>
-      <div className="flex gap-2 px-2 py-1 rounded-md bg-[var(--accent-soft)]/60">
-        <span className="text-[var(--success)] font-bold w-3">+</span>
-        <span className="text-[var(--ink)]">shipped 12 features in Q3</span>
+      <div className="flex gap-2 px-2 py-1 rounded-md bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/20">
+        <span className="font-bold w-3">+</span>
+        <span>shipped 12 features in Q3</span>
       </div>
     </div>
   );

@@ -10,11 +10,7 @@ function UploadVisual() {
           <div className="absolute -inset-1 rounded-2xl bg-[var(--accent-soft)] blur-md opacity-70" />
           <div className="relative h-11 w-11 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-card flex items-center justify-center">
             <div
-              className="h-7 w-7 rounded-lg flex items-center justify-center text-white"
-              style={{
-                background:
-                  "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%)",
-              }}
+              className="h-7 w-7 rounded-lg flex items-center justify-center bg-[var(--accent-soft)] text-[var(--accent-strong)]"
             >
               <Upload size={13} strokeWidth={2.4} />
             </div>
@@ -270,11 +266,7 @@ export function HowItWorks() {
                 <div className="relative mt-6 inline-block">
                   <div className="absolute -inset-2 rounded-3xl bg-[var(--accent-soft)] blur-lg opacity-70" />
                   <div
-                    className="relative h-14 w-14 rounded-2xl flex items-center justify-center text-white shadow-card"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%)",
-                    }}
+                    className="relative h-14 w-14 rounded-2xl flex items-center justify-center bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/30 shadow-card"
                   >
                     <Icon size={22} strokeWidth={2} />
                   </div>
@@ -303,11 +295,7 @@ export function HowItWorks() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.4, delay: 0.5 + i * 0.12 }}
-                  className="hidden lg:flex absolute top-[112px] -right-[14px] z-10 h-7 w-7 rounded-full items-center justify-center text-white shadow-card"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%)",
-                  }}
+                  className="hidden lg:flex absolute top-[112px] -right-[14px] z-10 h-7 w-7 rounded-full items-center justify-center bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/30 shadow-card"
                   aria-hidden
                 >
                   <ArrowRight size={12} strokeWidth={2.5} />

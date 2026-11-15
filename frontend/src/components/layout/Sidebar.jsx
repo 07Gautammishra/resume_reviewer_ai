@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import {
   LayoutGrid,
   FileText,
@@ -87,6 +87,7 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
 
 export function Sidebar() {
   const { user, logout } = useAuth();
+  const nav = useNavigate();
   const displayName = user?.name || "Account";
   const displayEmail = user?.email || "";
 
@@ -106,6 +107,10 @@ export function Sidebar() {
           <Link
             to="/"
             title="ScanMyCV Home"
+            onClick={(e) => {
+              e.preventDefault();
+              nav("/");
+            }}
             className={cn(
               "flex items-center h-14 w-14 group-hover/sidebar:w-[200px] cursor-pointer",
               "transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"

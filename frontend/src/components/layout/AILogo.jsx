@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-const AILogo = () => {
+const AILogo = ({ className } = {}) => {
   return (
     <div
-      className="relative h-12 w-12 flex items-center justify-center"
+      className={cn("relative h-12 w-12 flex items-center justify-center pointer-events-none", className)}
       aria-label="AI is online"
     >
       {/* Soft outer halo glow — breathes */}
       <motion.div
-        className="absolute -inset-1 rounded-[20px]"
+        className="absolute -inset-1 rounded-[20px] pointer-events-none"
         style={{
           background:
             "radial-gradient(circle, var(--accent) 0%, transparent 65%)",
@@ -19,9 +20,9 @@ const AILogo = () => {
       />
 
       {/* Rotating conic gradient ring (the sweep) */}
-      <div className="absolute inset-0 rounded-[16px] overflow-hidden">
+      <div className="absolute inset-0 rounded-[16px] overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute -inset-1/2"
+          className="absolute -inset-1/2 pointer-events-none"
           style={{
             background:
               "conic-gradient(from 0deg, #2F4A3A, #5B7C6A, #A8C4B3, #5B7C6A, #2F4A3A)",
@@ -32,10 +33,10 @@ const AILogo = () => {
       </div>
 
       {/* Inner card (creates the ring frame) */}
-      <div className="relative h-[38px] w-[38px] rounded-[12px] bg-[var(--surface)] flex items-center justify-center overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="relative h-[38px] w-[38px] rounded-[12px] bg-[var(--surface)] flex items-center justify-center overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] pointer-events-none">
         {/* Soft inner gradient backdrop */}
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
           style={{
             background:
               "radial-gradient(circle at 30% 30%, var(--accent-soft) 0%, transparent 70%)",
@@ -51,7 +52,7 @@ const AILogo = () => {
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="relative z-10 drop-shadow-[0_0_4px_rgba(168,196,179,0.5)]"
+          className="relative z-10 drop-shadow-[0_0_4px_rgba(168,196,179,0.5)] pointer-events-none"
           animate={{
             scale: [1, 1.12, 1],
             rotate: [0, 8, -8, 0],

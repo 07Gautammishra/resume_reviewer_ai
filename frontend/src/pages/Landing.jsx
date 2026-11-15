@@ -11,26 +11,17 @@ import { Footer } from "@/components/landing/Footer";
 import PricingCards from "@/components/landing/PricingCards";
 
 export default function Landing() {
-  // Landing always reads on light background — but app-wide theme persists.
-  useEffect(() => {
-    const prev = document.documentElement.getAttribute("data-theme");
-    document.documentElement.setAttribute("data-theme", "light");
-    return () => {
-      if (prev) document.documentElement.setAttribute("data-theme", prev);
-    };
-  }, []);
-
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] overflow-x-hidden">
       <Navbar />
-      <main style={{ background: "back" }}>
+      <main>
         <HeroSection />
         <FeaturesSection />
         <HowItWorks />
         <DashboardPreviewSection />
         <BenefitsSection />
         <TestimonialsSection />
-        <PricingCards/>
+        <PricingCards />
         <CTASection />
       </main>
       <Footer />

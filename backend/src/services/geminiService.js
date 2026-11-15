@@ -42,7 +42,7 @@ const responseSchema = {
           title: { type: Type.STRING },
           severity: { 
             type: Type.STRING, 
-            enum: ["low", "midium", "high"], 
+            enum: ["low", "medium", "high"], 
           },
           explanation: { type: Type.STRING },
           fix: { type: Type.STRING },
@@ -103,7 +103,7 @@ export const analysisValidator = z.object({
   issues: z.array(
     z.object({
       title: z.string(),
-      severity: z.enum(["low", "midium", "high"]),
+      severity: z.enum(["low", "medium", "midium", "high"]).transform((v) => (v === "midium" ? "medium" : v)),
       explanation: z.string().default(""),
       fix: z.string().default(""),
     })

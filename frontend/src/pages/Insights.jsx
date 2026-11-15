@@ -29,7 +29,13 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { useInsights } from "@/hooks/useAnalytics";
 
-const SEV_TONE = { low: "neutral", medium: "warning", high: "danger" };
+const SEV_TONE = { low: "neutral", medium: "warning", midium: "warning", high: "danger" };
+const SEV_ICON_STYLE = {
+  high: "bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/25",
+  medium: "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/25",
+  midium: "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/25",
+  low: "bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/20",
+};
 
 export default function Insights() {
   const nav = useNavigate();
@@ -183,14 +189,14 @@ export default function Insights() {
             <div className="space-y-3">
               {data.topIssues.map((issue, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-xl bg-[var(--surface-2)] flex items-center justify-center text-[var(--ink-muted)] shrink-0">
-                    <AlertCircle size={14} />
+                  <div className={cn("h-8 w-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm", SEV_ICON_STYLE[issue.severity] || SEV_ICON_STYLE.medium)}>
+                    <AlertCircle size={15} strokeWidth={2.2} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{issue.title}</div>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge tone={SEV_TONE[issue.severity] || "neutral"}>
-                        {issue.severity}
+                      <Badge tone={SEV_TONE[issue.severity] || "warning"}>
+                        {issue.severity === "midium" ? "medium" : issue.severity}
                       </Badge>
                       <span className="text-xs text-[var(--ink-muted)]">
                         {issue.count}× across analyses

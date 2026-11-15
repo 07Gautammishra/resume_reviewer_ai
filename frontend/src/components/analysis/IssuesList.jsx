@@ -5,28 +5,39 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Ca
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
-const SEV_TONE = { low: "neutral", medium: "warning", high: "danger" };
+const SEV_TONE = { low: "neutral", medium: "warning", midium: "warning", high: "danger" };
+
+const SEV_ICON_STYLE = {
+  high: "bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/30",
+  medium: "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/30",
+  midium: "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/30",
+  low: "bg-[var(--accent-soft)] text-[var(--accent-strong)] border border-[var(--accent)]/25",
+};
 
 function IssueItem({ issue }) {
   const [open, setOpen] = useState(false);
+  const normalizedSeverity = (issue.severity === "midium" ? "medium" : issue.severity) || "medium";
+  const iconStyle = SEV_ICON_STYLE[issue.severity] || SEV_ICON_STYLE.medium;
+
   return (
     <button
       onClick={() => setOpen((v) => !v)}
-      className="w-full text-left rounded-2xl bg-[var(--surface-2)] hover:bg-[var(--surface-2)]/80 border border-[var(--border)] p-4 transition-colors"
+      className="w-full text-left rounded-2xl bg-[var(--surface-2)] hover:bg-[var(--surface-2)]/80 border border-[var(--border)] p-4 transition-colors cursor-pointer"
     >
       <div className="flex items-start gap-3">
-        <div className="h-8 w-8 rounded-xl bg-[var(--surface)] flex items-center justify-center shrink-0 text-[var(--ink-muted)]">
-          <AlertCircle size={14} />
+        <div className={cn("h-8 w-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm transition-colors", iconStyle)}>
+          <AlertCircle size={16} strokeWidth={2.2} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3">
             <div className="font-medium text-sm text-[var(--ink)]">{issue.title}</div>
             <div className="flex items-center gap-2 shrink-0">
-              <Badge tone={SEV_TONE[issue.severity] || "neutral"}>
-                {issue.severity}
+              <Badge tone={SEV_TONE[issue.severity] || "warning"}>
+                {normalizedSeverity}
               </Badge>
               <ChevronDown
-                size={14}
+                size={16}
+                strokeWidth={2}
                 className={cn(
                   "text-[var(--ink-muted)] transition-transform",
                   open && "rotate-180"

@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 const issueSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
-        severity: { type: String, enum: ['low', "midium", "high"], default: "midium" },
+        severity: { type: String, enum: ['low', "medium", "midium", "high"], default: "medium" },
         explanation: String,
         fix: String,
     },{ _id: false}

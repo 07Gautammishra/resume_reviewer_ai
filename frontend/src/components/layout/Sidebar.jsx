@@ -120,7 +120,7 @@ export function Sidebar() {
                 "group-hover/sidebar:opacity-100 group-hover/sidebar:translate-x-0 group-hover/sidebar:delay-100"
               )}
             >
-              Roaster
+              ScanMyCv
             </span>
           </div>
 

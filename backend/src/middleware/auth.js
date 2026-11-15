@@ -5,12 +5,16 @@ import ApiError from "../utils/ApiError.js";
 
 const AuthMiddleware = async (req, res, next) => {
     try {
-        const token = req.cookies[ENV.cookieName];
+        let token = req.cookies[ENV.cookieName];
+        if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+            token = req.headers.authorization.slice(7).trim();
+        }
+
         if (!token) {
             throw ApiError.unauthorized("No token provided");
         }
         const decoded = verifyToken(token);
-        const user = await User.findById(decoded.id).select("+password");
+        const user = await User.findById(decoded.id);
         if (!user) {
             throw ApiError.unauthorized("User not found");
         }

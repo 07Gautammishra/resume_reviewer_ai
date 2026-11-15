@@ -102,9 +102,16 @@ export function Navbar() {
             {!loading && user ? (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center gap-2 h-9 px-3.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)] text-xs sm:text-[13px] font-medium hover:bg-[var(--border)]/40 transition-colors shrink-0"
+                className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)] text-xs sm:text-[13px] font-medium hover:bg-[var(--border)]/40 transition-colors shrink-0"
               >
-                {user.name?.[0].toUpperCase() || <User size={16} />}
+                <div className="h-6 w-6 rounded-full overflow-hidden bg-[var(--accent-soft)] text-[var(--accent-strong)] flex items-center justify-center text-xs font-semibold shrink-0">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    user.name?.[0]?.toUpperCase() || <User size={14} />
+                  )}
+                </div>
+                <span className="hidden sm:inline font-medium max-w-[120px] truncate">{user.name?.split(" ")[0]}</span>
               </Link>
             ) : (
               <>
@@ -169,8 +176,12 @@ export function Navbar() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
                   >
-                    <div className="h-6 w-6 rounded-full bg-[var(--ink)] text-[var(--bg)] flex items-center justify-center text-xs font-bold">
-                      {user.name?.[0].toUpperCase() || <User size={16} />}
+                    <div className="h-7 w-7 rounded-full overflow-hidden bg-[var(--accent-soft)] text-[var(--accent-strong)] flex items-center justify-center text-xs font-bold shrink-0">
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        user.name?.[0]?.toUpperCase() || <User size={16} />
+                      )}
                     </div>
                     <span>{user.name}</span>
                   </Link>

@@ -26,6 +26,9 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (credentials) => {
     const data = await authApi.login(credentials);
+    if (data.token) {
+      localStorage.setItem("scanmycv_token", data.token);
+    }
     setUser(data.user);
     // Clear old query cache to avoid showing stale data from a previous session
     queryClient.clear();
@@ -34,6 +37,9 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async (payload) => {
     const data = await authApi.register(payload);
+    if (data.token) {
+      localStorage.setItem("scanmycv_token", data.token);
+    }
     setUser(data.user);
     queryClient.clear();
     return data.user;
@@ -51,6 +57,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Logout request failed on server:", err);
     } finally {
+      localStorage.removeItem("scanmycv_token");
       setUser(null);
       queryClient.clear();
     }

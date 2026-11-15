@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: true,
+            required: false,
             select: false,
         },
         name: {
@@ -22,7 +22,27 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true,
             maxlength: 80,
-        }
+        },
+        avatar: {
+            type: String,
+            default: "",
+            trim: true,
+        },
+        googleId: {
+            type: String,
+            sparse: true,
+            index: true,
+        },
+        githubId: {
+            type: String,
+            sparse: true,
+            index: true,
+        },
+        authProvider: {
+            type: String,
+            enum: ["local", "google", "github"],
+            default: "local",
+        },
     },
     {
         timestamps: true,
@@ -32,6 +52,7 @@ userSchema.statics.hashPassword = function (password) {
     return bcrypt.hash(password, 12);
 }
 userSchema.methods.comparePassword = function (pin) {
+    if (!this.password) return false;
     return bcrypt.compare(pin, this.password);
 }
 userSchema.methods.toJSON = function () {

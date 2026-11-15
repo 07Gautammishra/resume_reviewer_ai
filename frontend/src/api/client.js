@@ -5,12 +5,22 @@ import axios from "axios";
 // or use explicit VITE_API_URL in production.
 const baseURL = import.meta.env.VITE_API_URL || "/api";
 
+export const getApiBaseUrl = () => baseURL;
+
 export const apiClient = axios.create({
   baseURL,
   withCredentials: true, // Crucial for HTTP-only JWT cookies across domains
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("scanmycv_token") : null;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 apiClient.interceptors.response.use(

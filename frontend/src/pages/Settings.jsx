@@ -54,11 +54,19 @@ function ProfileSection() {
 
       <form onSubmit={onSave} className="space-y-4">
         <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] font-semibold flex items-center justify-center text-lg ring-2 ring-[var(--surface)] shrink-0">
-            {(user?.name?.[0] || "?").toUpperCase()}
+          <div className="h-14 w-14 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] font-semibold flex items-center justify-center text-lg ring-2 ring-[var(--surface)] shrink-0 overflow-hidden">
+            {user?.avatar ? (
+              <img src={user.avatar} alt={user?.name} className="w-full h-full object-cover" />
+            ) : (
+              (user?.name?.[0] || "?").toUpperCase()
+            )}
           </div>
           <div className="text-xs text-[var(--ink-muted)]">
-            Avatar is generated from your initial.
+            {user?.avatar ? (
+              <span>Profile picture synced with your {user.authProvider === "google" ? "Google" : user.authProvider === "github" ? "GitHub" : "OAuth"} account.</span>
+            ) : (
+              <span>Avatar is generated from your initial.</span>
+            )}
           </div>
         </div>
 

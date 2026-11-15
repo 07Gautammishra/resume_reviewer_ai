@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Loader2, Mail, Lock } from "lucide-react";
 import {
@@ -9,14 +9,19 @@ import {
   AuthErrorBanner,
 } from "@/components/auth/AuthShell";
 import AILogo from "@/components/layout/AILogo";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const { login } = useAuth();
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
+  const oauthError = searchParams.get("error");
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const displayError = err || oauthError || "";
 
   const handleLogin = async () => {
     setErr("");
@@ -60,11 +65,13 @@ export default function Login() {
         <h1 className="font-display text-[34px] font-semibold tracking-tight text-[var(--ink)] leading-[1.05]">
           Welcome back
         </h1>
-        <p className="text-[var(--ink-muted)] mt-2 text-[15px]">
+        <p className="text-[var(--ink-muted)] mt-2 text-[15px] mb-8">
           Sign in to keep sharpening your resume.
         </p>
 
-        <form onSubmit={onSubmit} className="mt-9 space-y-4">
+        <OAuthButtons />
+
+        <form onSubmit={onSubmit} className="space-y-4">
           <AuthField
             label="Email"
             type="email"
@@ -93,7 +100,7 @@ export default function Login() {
             }
           />
 
-          <AuthErrorBanner>{err}</AuthErrorBanner>
+          <AuthErrorBanner>{displayError}</AuthErrorBanner>
 
           <div className="pt-1">
             <AuthPrimaryButton type="submit" disabled={loading}>

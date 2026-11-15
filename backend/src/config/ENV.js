@@ -15,6 +15,15 @@ const parsedOrigins = rawOrigins
   .split(",")
   .map((url) => url.trim().replace(/\/$/, "")); // Strip trailing slashes
 
+const isProd = (process.env.NODE_ENV || "development") === "production";
+const defaultApiUrl = isProd
+  ? "https://resume-roaster-backend-lvdz.onrender.com"
+  : `http://localhost:${process.env.PORT || 5000}`;
+const apiUrl = (process.env.API_BASE_URL || defaultApiUrl).replace(/\/$/, "");
+const primaryClientUrl = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.replace(/\/$/, "")
+  : (isProd ? "https://scanmycv-nine.vercel.app" : (parsedOrigins[0] || "http://localhost:5173"));
+
 const ENV = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT) || 5000,
@@ -23,9 +32,19 @@ const ENV = {
   cookieName: process.env.COOKIE_NAME || "arr_token",
   clientOrigins: parsedOrigins,
   CLIENT_URL: parsedOrigins,
+  clientUrl: primaryClientUrl,
+  apiUrl,
   geminiApi: process.env.GEMINI_API_KEY,
   geminiModel: process.env.GEMINI_MODEL || "gemini-1.5-flash",
-  isProd: (process.env.NODE_ENV || "development") === "production",
+  isProd,
+  // Google OAuth
+  googleClientId: process.env.GOOGLE_CLIENT_ID || "",
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
+  // GitHub OAuth
+  githubClientId: process.env.GITHUB_CLIENT_ID || "",
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+  githubCallbackUrl: process.env.GITHUB_CALLBACK_URL || `${apiUrl}/api/auth/github/callback`,
 };
 
 export { ENV };

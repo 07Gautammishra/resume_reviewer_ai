@@ -18,7 +18,7 @@ export function ProfileCard({ user, stats }) {
   return (
     <Card className="h-full flex flex-col items-center text-center">
       <div className="relative">
-        <Avatar name={user?.name} size={72} className="ring-4" />
+        <Avatar name={user?.name} src={user?.avatar} size={72} className="ring-4" />
         <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[var(--accent)] ring-4 ring-[var(--surface)] flex items-center justify-center text-[10px] text-white font-bold">
           ✓
         </span>

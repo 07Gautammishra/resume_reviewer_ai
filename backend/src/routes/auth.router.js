@@ -5,7 +5,18 @@ import asyncHandler from "../utils/asyncHandler.js";
 import AuthMiddleware from "../middleware/auth.js";
 import validate from "../middleware/validate.js";
 import { authLimiter } from "../middleware/rateLimit.js";
-import {register, login, logout, getCurrentUser, updateProfile, updatePassword,} from "../controllers/auth.controller.js";
+import {
+    register,
+    login,
+    logout,
+    getCurrentUser,
+    updateProfile,
+    updatePassword,
+    googleAuthRedirect,
+    googleAuthCallback,
+    githubAuthRedirect,
+    githubAuthCallback,
+} from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
@@ -20,7 +31,8 @@ const loginSchema = z.object({
     password: z.string().min(1).max(100),
 });
 const profileSchema = z.object({
-    name: z.string().trim().min(1).max(80),
+    name: z.string().trim().min(1).max(80).optional(),
+    avatar: z.string().trim().url().or(z.literal("")).optional(),
 });
 
 const passwordSchema = z.object({
@@ -34,5 +46,11 @@ router.post("/logout", AuthMiddleware, asyncHandler(logout));
 router.get("/me", AuthMiddleware, asyncHandler(getCurrentUser));
 router.patch("/profile", AuthMiddleware, validate(profileSchema, "body"), asyncHandler(updateProfile));
 router.patch("/password", authLimiter, AuthMiddleware, validate(passwordSchema), asyncHandler(updatePassword));
+
+// OAuth Routes
+router.get("/google", asyncHandler(googleAuthRedirect));
+router.get("/google/callback", asyncHandler(googleAuthCallback));
+router.get("/github", asyncHandler(githubAuthRedirect));
+router.get("/github/callback", asyncHandler(githubAuthCallback));
 
 export default router;

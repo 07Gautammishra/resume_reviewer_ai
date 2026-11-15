@@ -3,6 +3,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import AuthCallback from "@/pages/AuthCallback";
 import Landing from "@/pages/Landing";
 import { Placeholder } from "@/pages/Placeholder";
 import Resumes from "@/pages/Resumes";
@@ -51,6 +52,7 @@ function ProtectedShell() {
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
+  { path: "auth/callback", element: <AuthCallback /> },
 
   // Public routes (guests only)
   {

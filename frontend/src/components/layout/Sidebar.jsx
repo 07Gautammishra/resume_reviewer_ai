@@ -148,8 +148,12 @@ export function Sidebar() {
               "transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
             )}
           >
-            <div className="h-10 w-10 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] font-semibold flex items-center justify-center text-sm ring-2 ring-[var(--surface)] shrink-0">
-              {user?.name?.[0]?.toUpperCase() || "R"}
+            <div className="h-10 w-10 rounded-full bg-[var(--accent-soft)] text-[var(--accent-strong)] font-semibold flex items-center justify-center text-sm ring-2 ring-[var(--surface)] shrink-0 overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={displayName} className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.[0]?.toUpperCase() || "R"
+              )}
             </div>
             <div
               className={cn(

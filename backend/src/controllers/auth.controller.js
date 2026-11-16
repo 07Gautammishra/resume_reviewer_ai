@@ -1,5 +1,5 @@
 import ApiError from "../utils/ApiError.js";
-import { signToken, cookieOptions } from "../utils/jwt.js";
+import { signToken, cookieOptions, getCookieOptions } from "../utils/jwt.js";
 import { ENV } from "../config/ENV.js";
 import User from "../models/user.model.js";
 import {
@@ -9,9 +9,9 @@ import {
   getGitHubUserFromCode,
 } from "../services/oauthService.js";
 
-function issueSession(res, user) {
-  const token = signToken(user._id);
-  res.cookie(ENV.cookieName, token, cookieOptions);
+function issueSession(res, user, rememberMe = false) {
+  const token = signToken(user._id, rememberMe);
+  res.cookie(ENV.cookieName, token, getCookieOptions(rememberMe));
   return token;
 }
 
@@ -75,7 +75,7 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe = false } = req.body;
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
@@ -93,12 +93,17 @@ const login = async (req, res) => {
     throw ApiError.unauthorized("Invalid email or password");
   }
 
-  const token = issueSession(res, user);
+  const token = issueSession(res, user, Boolean(rememberMe));
   res.status(200).json({ user, token });
 };
 
 const logout = async (req, res) => {
-  res.clearCookie(ENV.cookieName, cookieOptions);
+  res.clearCookie(ENV.cookieName, {
+    httpOnly: true,
+    secure: ENV.isProd,
+    sameSite: ENV.isProd ? "none" : "Lax",
+    path: "/",
+  });
   res.status(200).json({ message: "Logged out successfully" });
 };
 

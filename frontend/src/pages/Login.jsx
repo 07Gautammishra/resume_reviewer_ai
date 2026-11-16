@@ -10,6 +10,7 @@ import {
 } from "@/components/auth/AuthShell";
 import AILogo from "@/components/layout/AILogo";
 import { OAuthButtons } from "@/components/auth/OAuthButtons";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
@@ -17,7 +18,22 @@ export default function Login() {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
   const oauthError = searchParams.get("error");
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [rememberMe, setRememberMe] = useState(() => {
+    try {
+      return localStorage.getItem("scanmycv_remember_choice") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [form, setForm] = useState(() => {
+    let savedEmail = "";
+    try {
+      savedEmail = localStorage.getItem("scanmycv_remembered_email") || "";
+    } catch {
+      /* ignore */
+    }
+    return { email: savedEmail, password: "" };
+  });
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +43,18 @@ export default function Login() {
     setErr("");
     setLoading(true);
     try {
-      await login(form);
+      await login({ ...form, rememberMe });
+      try {
+        if (rememberMe) {
+          localStorage.setItem("scanmycv_remembered_email", form.email.trim());
+          localStorage.setItem("scanmycv_remember_choice", "true");
+        } else {
+          localStorage.removeItem("scanmycv_remembered_email");
+          localStorage.removeItem("scanmycv_remember_choice");
+        }
+      } catch {
+        /* storage access handling */
+      }
       nav("/dashboard");
     } catch (e) {
       setErr(e.message || "Login failed");
@@ -99,6 +126,14 @@ export default function Login() {
               </button>
             }
           />
+
+          <div className="flex items-center justify-between pt-0.5">
+            <Checkbox
+              checked={rememberMe}
+              onChange={setRememberMe}
+              label="Remember me for 30 days"
+            />
+          </div>
 
           <AuthErrorBanner>{displayError}</AuthErrorBanner>
 

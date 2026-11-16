@@ -29,6 +29,7 @@ const registerSchema = z.object({
 const loginSchema = z.object({
     email: z.string().trim().toLowerCase().email(),
     password: z.string().min(1).max(100),
+    rememberMe: z.boolean().optional().default(false),
 });
 const profileSchema = z.object({
     name: z.string().trim().min(1).max(80).optional(),

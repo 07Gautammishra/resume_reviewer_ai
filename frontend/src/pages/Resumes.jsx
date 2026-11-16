@@ -13,7 +13,7 @@ export default function Resumes() {
   const { data: resumes, isLoading } = useResumesList();
 
   function handleUploaded(resume) {
-    nav(`/resumes/${resume._id}`);
+    nav(`/resumes/${resume._id}`, { state: { autoAnalyze: true } });
   }
 
   return (

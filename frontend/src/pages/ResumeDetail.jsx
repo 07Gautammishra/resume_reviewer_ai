@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Sparkles, ArrowLeft, Loader2, FileText, Download } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { Sparkles, ArrowLeft, Loader2, FileText, Download, CheckCircle2 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,7 +17,7 @@ import { KeywordChips } from "@/components/analysis/KeywordChips";
 import { BulletRewrites } from "@/components/analysis/BulletRewrites";
 import { VersionSwitcher } from "@/components/resume/VersionSwitcher";
 import { DiffView } from "@/components/resume/DiffView";
-import { relativeTime } from "@/lib/utils";
+import { relativeTime, cn } from "@/lib/utils";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import {
   useResume,
@@ -29,6 +29,8 @@ import {
 export default function ResumeDetail() {
   const { id } = useParams();
   const nav = useNavigate();
+  const location = useLocation();
+  const autoTriggeredRef = useRef(false);
 
   const { data, isLoading, error } = useResume(id);
   const resume = data?.resume;
@@ -66,6 +68,21 @@ export default function ResumeDetail() {
       /* surfaced below */
     }
   }
+
+  // Zero-friction scan loop: automatically trigger AI analysis when landing from an upload
+  useEffect(() => {
+    if (
+      location.state?.autoAnalyze &&
+      activeVersionId &&
+      !analysis &&
+      !analysisQuery.isLoading &&
+      !analyze.isPending &&
+      !autoTriggeredRef.current
+    ) {
+      autoTriggeredRef.current = true;
+      runAnalyze();
+    }
+  }, [location.state, activeVersionId, analysis, analysisQuery.isLoading, analyze.isPending]);
 
   async function runApplyRewrites(rewriteIds) {
     if (!analysis?._id) return;
@@ -189,7 +206,9 @@ export default function ResumeDetail() {
         )}
       </Card>
 
-      {!analysis && !analysisQuery.isLoading && (
+      {analyze.isPending && <AnalyzingProgressCard />}
+
+      {!analysis && !analysisQuery.isLoading && !analyze.isPending && (
         <EmptyState
           icon={Sparkles}
           title="No analysis yet for this version"
@@ -197,7 +216,7 @@ export default function ResumeDetail() {
         />
       )}
 
-      {analysisQuery.isLoading && (
+      {analysisQuery.isLoading && !analyze.isPending && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <Skeleton className="h-[280px] rounded-3xl" />
           <Skeleton className="h-[280px] rounded-3xl lg:col-span-2" />
@@ -431,6 +450,92 @@ function ParsedSectionsPreview({ version }) {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function AnalyzingProgressCard() {
+  const [stepIndex, setStepIndex] = useState(0);
+
+  const STEPS = [
+    "Extracting resume sections and contact information...",
+    "Auditing ATS formatting against 2026 enterprise parsers...",
+    "Computing ATS impact scores, missing keywords, and rewrites...",
+  ];
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setStepIndex(1), 1800);
+    const t2 = setTimeout(() => setStepIndex(2), 3600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <Card className="p-8 sm:p-10 border-[var(--accent)]/30 bg-gradient-to-b from-[var(--surface)] to-[var(--surface-2)] shadow-card">
+        <div className="max-w-xl mx-auto text-center space-y-4">
+          <div className="relative w-14 h-14 mx-auto flex items-center justify-center">
+            <div className="absolute inset-0 rounded-2xl bg-[var(--accent-soft)] animate-ping opacity-35" />
+            <div className="relative w-14 h-14 rounded-2xl bg-[var(--accent-soft)] text-[var(--accent-strong)] flex items-center justify-center border border-[var(--accent)]/30 shadow-sm">
+              <Sparkles size={24} className="animate-spin" />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-display text-xl sm:text-2xl font-semibold tracking-tight text-[var(--ink)]">
+              Analyzing your resume with AI
+            </h3>
+            <p className="text-sm text-[var(--ink-muted)] mt-1.5 max-w-md mx-auto">
+              Scoring impact, verifying ATS parsing structure, and drafting actionable bullet upgrades.
+            </p>
+          </div>
+
+          <div className="pt-3 space-y-2.5 text-left max-w-md mx-auto">
+            {STEPS.map((label, idx) => {
+              const isDone = stepIndex > idx;
+              const isCurrent = stepIndex === idx;
+              return (
+                <div
+                  key={label}
+                  className={cn(
+                    "flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm transition-all duration-300",
+                    isDone
+                      ? "bg-[var(--surface)] border-[var(--border)] text-[var(--ink-muted)]"
+                      : isCurrent
+                      ? "bg-[var(--accent-soft)] border-[var(--accent)]/30 text-[var(--ink)] font-medium shadow-sm"
+                      : "opacity-40 border-transparent text-[var(--ink-muted)]"
+                  )}
+                >
+                  <div className="shrink-0 flex items-center justify-center w-5 h-5">
+                    {isDone ? (
+                      <CheckCircle2 size={16} className="text-[var(--success)]" />
+                    ) : isCurrent ? (
+                      <Loader2 size={16} className="animate-spin text-[var(--accent)]" />
+                    ) : (
+                      <div className="w-2 h-2 rounded-full bg-[var(--border)]" />
+                    )}
+                  </div>
+                  <span className="flex-1 truncate">{label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 opacity-60">
+        <div className="lg:col-span-4">
+          <Skeleton className="h-[280px] rounded-3xl" />
+        </div>
+        <div className="lg:col-span-5">
+          <Skeleton className="h-[280px] rounded-3xl" />
+        </div>
+        <div className="lg:col-span-3">
+          <Skeleton className="h-[280px] rounded-3xl" />
+        </div>
       </div>
     </div>
   );

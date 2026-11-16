@@ -71,7 +71,7 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
       )}
     >
       <span className="h-11 w-11 flex items-center justify-center shrink-0">
-        <Icon size={18} />
+        <Icon size={18} strokeWidth={2} />
       </span>
       <span className={LABEL_BASE}>{label}</span>
     </div>
@@ -83,7 +83,7 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
       if (prefetchRoute[key]) prefetchRoute[key]();
     };
     return (
-      <NavLink to={to} title={label} className="block w-full" onMouseEnter={handlePrefetch}>
+      <NavLink to={to} title={label} className="block" onMouseEnter={handlePrefetch}>
         {({ isActive }) => inner(isActive)}
       </NavLink>
     );
@@ -94,7 +94,7 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
       type="button"
       onClick={onClick}
       title={label}
-      className="block w-full text-left cursor-pointer"
+      className="block p-0 bg-transparent border-0 cursor-pointer text-left"
     >
       {inner(false)}
     </button>
@@ -159,7 +159,7 @@ export function Sidebar() {
           </nav>
         </div>
 
-        <div className="flex flex-col items-center gap-2 w-full">
+        <div className="flex flex-col items-center gap-1.5 w-full">
           <ActionRow icon={Settings} label="Settings" to="/settings" />
           <ActionRow icon={LogOut} label="Log out" onClick={handleLogout} />
 

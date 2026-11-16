@@ -36,24 +36,30 @@ export function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Preload critical route chunks during browser idle time for instant transitions
+  // Preload relevant route chunks during browser idle time without wasting data on unused charts
   useEffect(() => {
     const timer = setTimeout(() => {
       if (typeof window !== "undefined") {
-        if ("requestIdleCallback" in window) {
-          window.requestIdleCallback(() => {
+        const prefetch = () => {
+          if (user) {
+            prefetchRoute.dashboard?.();
+          } else {
             prefetchRoute.login?.();
             prefetchRoute.register?.();
-            prefetchRoute.dashboard?.();
-          });
+          }
+        };
+
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(prefetch);
         } else {
-          prefetchRoute.login?.();
-          prefetchRoute.register?.();
+          prefetch();
         }
       }
-    }, 1200);
+    }, 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [user]);
+
+  const isOverHero = !scrolled && !open;
 
   return (
     <motion.header
@@ -65,9 +71,9 @@ export function Navbar() {
       <div
         className={cn(
           "max-w-[1240px] mx-auto rounded-2xl [@media(min-width:926px)]:rounded-full border transition-all duration-300 pointer-events-auto",
-          scrolled
+          scrolled || open
             ? "bg-[var(--surface)]/85 border-[var(--border)] backdrop-blur-xl shadow-card"
-            : "bg-[var(--surface)]/95 border-transparent backdrop-blur-md"
+            : "bg-black/20 border-white/10 backdrop-blur-md"
         )}
       >
         <div className="flex items-center justify-between gap-3 px-3.5 sm:px-5 py-2.5">
@@ -76,7 +82,12 @@ export function Navbar() {
             <div className="flex items-center justify-center shrink-0">
               <AILogo />
             </div>
-            <span className="font-display text-sm sm:text-[15px] font-semibold tracking-tight text-[var(--ink)] hidden min-[380px]:inline">
+            <span
+              className={cn(
+                "font-display text-sm sm:text-[15px] font-semibold tracking-tight hidden min-[380px]:inline transition-colors",
+                isOverHero ? "text-white" : "text-[var(--ink)]"
+              )}
+            >
               ScanMyCV
             </span>
           </Link>
@@ -87,7 +98,12 @@ export function Navbar() {
               <a
                 key={l.href}
                 href={l.href}
-                className="px-3.5 py-1.5 rounded-full text-[13px] font-medium text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
+                className={cn(
+                  "px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors",
+                  isOverHero
+                    ? "text-white/80 hover:text-white hover:bg-white/10"
+                    : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)]"
+                )}
               >
                 {l.label}
               </a>
@@ -100,7 +116,12 @@ export function Navbar() {
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={toggle}
-              className="h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] border border-[var(--border)] transition-colors shrink-0 cursor-pointer"
+              className={cn(
+                "h-9 w-9 rounded-full flex items-center justify-center transition-colors shrink-0 cursor-pointer",
+                isOverHero
+                  ? "text-white hover:bg-white/10 border border-white/15"
+                  : "text-[var(--ink)] hover:bg-[var(--surface-2)] border border-[var(--border)]"
+              )}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
               <motion.div
@@ -111,9 +132,9 @@ export function Navbar() {
                 className="flex items-center justify-center"
               >
                 {theme === "light" ? (
-                  <Moon size={16} className="text-[var(--ink)]" />
+                  <Moon size={16} className={isOverHero ? "text-white" : "text-[var(--ink)]"} />
                 ) : (
-                  <Sun size={16} className="text-[var(--ink)]" />
+                  <Sun size={16} className={isOverHero ? "text-white" : "text-[var(--ink)]"} />
                 )}
               </motion.div>
             </motion.button>
@@ -123,7 +144,12 @@ export function Navbar() {
               <Link
                 to="/dashboard"
                 onMouseEnter={() => prefetchRoute.dashboard?.()}
-                className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)] text-xs sm:text-[13px] font-medium hover:bg-[var(--border)]/40 transition-colors shrink-0"
+                className={cn(
+                  "inline-flex items-center gap-2 h-9 px-3 rounded-full text-xs sm:text-[13px] font-medium transition-colors shrink-0",
+                  isOverHero
+                    ? "bg-white/12 border border-white/15 text-white hover:bg-white/20"
+                    : "bg-[var(--surface-2)] border border-[var(--border)] text-[var(--ink)] hover:bg-[var(--border)]/40"
+                )}
               >
                 <div className="h-6 w-6 rounded-full overflow-hidden bg-[var(--accent-soft)] text-[var(--accent-strong)] flex items-center justify-center text-xs font-semibold shrink-0">
                   {user?.avatar ? (
@@ -140,7 +166,12 @@ export function Navbar() {
                 <Link
                   to="/login"
                   onMouseEnter={() => prefetchRoute.login?.()}
-                  className="hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
+                  className={cn(
+                    "hidden sm:inline-flex items-center justify-center h-9 px-4 rounded-full text-[13px] font-medium transition-colors",
+                    isOverHero
+                      ? "text-white hover:bg-white/10"
+                      : "text-[var(--ink)] hover:bg-[var(--surface-2)]"
+                  )}
                 >
                   Sign in
                 </Link>
@@ -149,7 +180,12 @@ export function Navbar() {
                 <Link
                   to="/register"
                   onMouseEnter={() => prefetchRoute.register?.()}
-                  className="group inline-flex items-center justify-center gap-1.5 h-9 px-3.5 sm:px-4 rounded-full bg-[var(--ink)] text-[var(--bg)] text-xs sm:text-[13px] font-semibold hover:opacity-90 active:scale-[0.98] transition-all shrink-0"
+                  className={cn(
+                    "group inline-flex items-center justify-center gap-1.5 h-9 px-3.5 sm:px-4 rounded-full text-xs sm:text-[13px] font-semibold active:scale-[0.98] transition-all shrink-0",
+                    isOverHero
+                      ? "bg-white text-zinc-900 hover:bg-white/90 shadow-md"
+                      : "bg-[var(--ink)] text-[var(--bg)] hover:opacity-90 shadow-sm"
+                  )}
                 >
                   <span>Get started</span>
                   <ArrowRight
@@ -163,7 +199,12 @@ export function Navbar() {
             {/* Mobile Drawer Trigger (Visible <= 925px) */}
             <button
               onClick={() => setOpen((o) => !o)}
-              className="[@media(min-width:926px)]:hidden h-9 w-9 rounded-full flex items-center justify-center text-[var(--ink)] hover:bg-[var(--surface-2)] shrink-0 transition-colors cursor-pointer"
+              className={cn(
+                "[@media(min-width:926px)]:hidden h-9 w-9 rounded-full flex items-center justify-center shrink-0 transition-colors cursor-pointer",
+                isOverHero
+                  ? "text-white hover:bg-white/10"
+                  : "text-[var(--ink)] hover:bg-[var(--surface-2)]"
+              )}
               aria-label="Toggle menu"
             >
               {open ? <X size={18} /> : <Menu size={18} />}

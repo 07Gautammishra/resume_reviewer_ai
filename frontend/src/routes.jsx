@@ -60,8 +60,9 @@ const withSuspense = (Component) => (props) => (
   </Suspense>
 );
 
-// High-performance code-splitting with dynamic imports
-const Landing = withSuspense(lazy(() => import("@/pages/Landing")));
+import Landing from "@/pages/Landing";
+
+// High-performance code-splitting with dynamic imports for interior routes
 const Dashboard = withSuspense(lazy(() => import("@/pages/Dashboard")));
 const Login = withSuspense(lazy(() => import("@/pages/Login")));
 const Register = withSuspense(lazy(() => import("@/pages/Register")));
@@ -76,7 +77,7 @@ const Settings = withSuspense(lazy(() => import("@/pages/Settings")));
 
 // Instant route prefetching utilities
 export const prefetchRoute = {
-  landing: () => import("@/pages/Landing"),
+  landing: () => Promise.resolve(),
   dashboard: () => import("@/pages/Dashboard"),
   login: () => import("@/pages/Login"),
   register: () => import("@/pages/Register"),

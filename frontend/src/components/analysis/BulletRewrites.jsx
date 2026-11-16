@@ -1,10 +1,78 @@
 import { useState, useMemo } from "react";
-import { ArrowRight, Loader2, Sparkles, Wand2, Info } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, Wand2, Info, GitCompare } from "lucide-react";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { cn } from "@/lib/utils";
+import { cn, diffWords } from "@/lib/utils";
+
+function OriginalDiffView({ original, rewritten, isDiff }) {
+  const tokens = useMemo(() => {
+    if (!isDiff) return null;
+    const diff = diffWords(original, rewritten);
+    return diff.filter((t) => t.type === "same" || t.type === "remove");
+  }, [original, rewritten, isDiff]);
+
+  if (!isDiff || !tokens) {
+    return (
+      <div className="text-[13.5px] text-[var(--ink-muted)] leading-relaxed line-through decoration-[var(--ink-muted)]/30">
+        {original}
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-[13.5px] text-[var(--ink-muted)] leading-relaxed flex flex-wrap items-baseline gap-x-1 gap-y-1">
+      {tokens.map((token, idx) =>
+        token.type === "remove" ? (
+          <span
+            key={idx}
+            className="line-through decoration-[var(--danger)]/70 text-[var(--danger)] bg-[var(--danger)]/10 px-1 py-0.5 rounded text-xs font-normal"
+          >
+            {token.value}
+          </span>
+        ) : (
+          <span key={idx} className="opacity-75">
+            {token.value}
+          </span>
+        )
+      )}
+    </div>
+  );
+}
+
+function RewrittenDiffView({ original, rewritten, isDiff }) {
+  const tokens = useMemo(() => {
+    if (!isDiff) return null;
+    const diff = diffWords(original, rewritten);
+    return diff.filter((t) => t.type === "same" || t.type === "add");
+  }, [original, rewritten, isDiff]);
+
+  if (!isDiff || !tokens) {
+    return (
+      <div className="text-[13.5px] text-[var(--ink)] leading-relaxed font-medium">
+        {rewritten}
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-[13.5px] text-[var(--ink)] leading-relaxed font-medium flex flex-wrap items-baseline gap-x-1 gap-y-1">
+      {tokens.map((token, idx) =>
+        token.type === "add" ? (
+          <span
+            key={idx}
+            className="bg-[var(--accent-soft)] text-[var(--accent-strong)] font-semibold px-1.5 py-0.5 rounded border border-[var(--accent)]/30 shadow-xs"
+          >
+            {token.value}
+          </span>
+        ) : (
+          <span key={idx}>{token.value}</span>
+        )
+      )}
+    </div>
+  );
+}
 
 function GradientNumber({ value, size = 32 }) {
   return (
@@ -28,6 +96,7 @@ function GradientNumber({ value, size = 32 }) {
 export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
   const ids = useMemo(() => rewrites.map((r) => r._id).filter(Boolean), [rewrites]);
   const [selected, setSelected] = useState(() => new Set(ids));
+  const [diffMode, setDiffMode] = useState(true);
 
   const allSelected = selected.size === ids.length && ids.length > 0;
   const someSelected = selected.size > 0;
@@ -144,6 +213,16 @@ export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant={diffMode ? "accent" : "outline"}
+              size="sm"
+              onClick={() => setDiffMode((v) => !v)}
+              className="gap-1.5"
+              title="Highlight specific words modified by AI"
+            >
+              <GitCompare size={13} />
+              {diffMode ? "Word Diff: On" : "Word Diff: Off"}
+            </Button>
             <Button variant="outline" size="sm" onClick={toggleAll}>
               {allSelected ? "Clear all" : "Select all"}
             </Button>
@@ -228,21 +307,25 @@ export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
 
               {/* Before / arrow / After */}
               <div className="grid grid-cols-1 md:grid-cols-[1fr_36px_1fr] gap-3 items-stretch">
-                <div className="relative rounded-xl bg-[var(--surface-2)]/70 p-4 border border-[var(--border)]">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ink-muted)]/50" />
-                    <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ink-muted)]">
-                      Original
+                <div className="relative rounded-xl bg-[var(--surface-2)]/70 p-4 border border-[var(--border)] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--danger)]" />
+                      <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ink-muted)]">
+                        Original Bullet
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-[13.5px] text-[var(--ink-muted)] leading-relaxed line-through decoration-[var(--ink-muted)]/30">
-                    {r.original}
+                    <OriginalDiffView
+                      original={r.original}
+                      rewritten={r.rewritten}
+                      isDiff={diffMode}
+                    />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-center py-2 md:py-0">
                   <div
-                    className="h-9 w-9 rounded-full flex items-center justify-center text-white shadow-card"
+                    className="h-9 w-9 rounded-full flex items-center justify-center text-white shadow-card shrink-0"
                     style={{
                       background:
                         "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%)",
@@ -253,7 +336,7 @@ export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
                 </div>
 
                 <div
-                  className="relative rounded-xl p-4 border"
+                  className="relative rounded-xl p-4 border flex flex-col justify-between"
                   style={{
                     background:
                       "linear-gradient(135deg, var(--accent-soft) 0%, var(--surface) 100%)",
@@ -261,25 +344,29 @@ export function BulletRewrites({ rewrites, onApply, isApplying, error }) {
                       "color-mix(in srgb, var(--accent) 30%, transparent)",
                   }}
                 >
-                  <div className="flex items-center justify-between gap-1.5 mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <Sparkles
-                        size={10}
-                        strokeWidth={2.5}
-                        className="text-[var(--accent-strong)]"
-                      />
-                      <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--accent-strong)]">
-                        Rewritten
+                  <div>
+                    <div className="flex items-center justify-between gap-1.5 mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles
+                          size={11}
+                          strokeWidth={2.5}
+                          className="text-[var(--accent-strong)]"
+                        />
+                        <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--accent-strong)]">
+                          Upgraded Bullet
+                        </div>
                       </div>
+                      <CopyButton
+                        text={r.rewritten}
+                        showText={true}
+                        className="h-6 px-2.5 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] text-[11px] shadow-sm"
+                      />
                     </div>
-                    <CopyButton
-                      text={r.rewritten}
-                      showText={true}
-                      className="h-6 px-2.5 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-2)] border border-[var(--border)] text-[11px] shadow-sm"
+                    <RewrittenDiffView
+                      original={r.original}
+                      rewritten={r.rewritten}
+                      isDiff={diffMode}
                     />
-                  </div>
-                  <div className="text-[13.5px] text-[var(--ink)] leading-relaxed font-medium">
-                    {r.rewritten}
                   </div>
                 </div>
               </div>

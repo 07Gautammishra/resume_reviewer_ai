@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getApiBaseUrl } from "@/api/client";
 import { Loader2 } from "lucide-react";
 
@@ -41,6 +41,29 @@ export function OAuthButtons() {
   const [loadingProvider, setLoadingProvider] = useState(null);
 
   const apiBase = getApiBaseUrl().replace(/\/$/, "");
+
+  // Reset loading state on browser Back/Forward (bfcache), tab refocus, or pagehide
+  useEffect(() => {
+    const resetLoading = () => setLoadingProvider(null);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        resetLoading();
+      }
+    };
+
+    window.addEventListener("pageshow", resetLoading);
+    window.addEventListener("pagehide", resetLoading);
+    window.addEventListener("focus", resetLoading);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pageshow", resetLoading);
+      window.removeEventListener("pagehide", resetLoading);
+      window.removeEventListener("focus", resetLoading);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   const handleOAuthClick = (provider) => {
     setLoadingProvider(provider);

@@ -42,7 +42,7 @@ const passwordSchema = z.object({
 
 router.post("/register", authLimiter, validate(registerSchema, "body"), asyncHandler(register));
 router.post("/login", authLimiter, validate(loginSchema, "body"), asyncHandler(login));
-router.post("/logout", AuthMiddleware, asyncHandler(logout));
+router.post("/logout", asyncHandler(logout));
 router.get("/me", AuthMiddleware, asyncHandler(getCurrentUser));
 router.patch("/profile", AuthMiddleware, validate(profileSchema, "body"), asyncHandler(updateProfile));
 router.patch("/password", authLimiter, AuthMiddleware, validate(passwordSchema), asyncHandler(updatePassword));

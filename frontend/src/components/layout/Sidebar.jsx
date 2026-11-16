@@ -82,14 +82,19 @@ function ActionRow({ icon: Icon, label, onClick, to }) {
       if (prefetchRoute[key]) prefetchRoute[key]();
     };
     return (
-      <NavLink to={to} title={label} className="block" onMouseEnter={handlePrefetch}>
+      <NavLink to={to} title={label} className="block w-full" onMouseEnter={handlePrefetch}>
         {({ isActive }) => inner(isActive)}
       </NavLink>
     );
   }
 
   return (
-    <button onClick={onClick} title={label} className="block">
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      className="block w-full text-left cursor-pointer"
+    >
       {inner(false)}
     </button>
   );
@@ -100,6 +105,11 @@ export function Sidebar() {
   const nav = useNavigate();
   const displayName = user?.name || "Account";
   const displayEmail = user?.email || "";
+
+  const handleLogout = useCallback(() => {
+    logout();
+    nav("/login", { replace: true });
+  }, [logout, nav]);
 
   return (
     <>
@@ -150,7 +160,7 @@ export function Sidebar() {
 
         <div className="flex flex-col items-center gap-2 w-full">
           <ActionRow icon={Settings} label="Settings" to="/settings" />
-          <ActionRow icon={LogOut} label="Log out" onClick={logout} />
+          <ActionRow icon={LogOut} label="Log out" onClick={handleLogout} />
 
           <div
             className={cn(
@@ -263,7 +273,8 @@ export function Sidebar() {
 
         {/* Logout Button */}
         <button
-          onClick={logout}
+          type="button"
+          onClick={handleLogout}
           title="Log out"
           className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-[10px] font-medium text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors cursor-pointer"
         >

@@ -51,16 +51,20 @@ export function AuthProvider({ children }) {
     return data.user;
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(() => {
+    // 1. Optimistic synchronous session cleanup: instant UI responsiveness
     try {
-      await authApi.logout();
-    } catch (err) {
-      console.error("Logout request failed on server:", err);
-    } finally {
       localStorage.removeItem("scanmycv_token");
-      setUser(null);
-      queryClient.clear();
+    } catch {
+      // Gracefully handle storage errors in restricted contexts
     }
+    setUser(null);
+    queryClient.clear();
+
+    // 2. Non-blocking background session invalidation on server
+    return authApi.logout().catch((err) => {
+      console.warn("Background logout sync:", err?.message || err);
+    });
   }, [queryClient]);
 
   return (

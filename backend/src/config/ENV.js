@@ -17,7 +17,7 @@ const parsedOrigins = rawOrigins
 
 const isProd = (process.env.NODE_ENV || "development") === "production";
 const defaultApiUrl = isProd
-  ? "https://resume-roaster-backend-lvdz.onrender.com"
+  ? "https://scanmycv-backend.onrender.com"
   : `http://localhost:${process.env.PORT || 5000}`;
 const apiUrl = (process.env.API_BASE_URL || defaultApiUrl).replace(/\/$/, "");
 const primaryClientUrl = process.env.FRONTEND_URL

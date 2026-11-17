@@ -291,18 +291,25 @@ function SectionHeader({ children }) {
 }
 
 function Bullet({ children }) {
+  if (!children) return null;
+  const text =
+    typeof children === "string"
+      ? children
+      : children?.rewritten || children?.text || String(children || "");
+  if (!text.trim()) return null;
   return (
     <View style={styles.bullet} wrap={false}>
       <View style={styles.bulletDot} />
-      <Text style={styles.bulletText}>{children}</Text>
+      <Text style={styles.bulletText}>{text}</Text>
     </View>
   );
 }
 
 function ContactItem({ children, href }) {
-  if (href) {
+  if (!children) return null;
+  if (href && typeof href === "string" && href.trim()) {
     return (
-      <Link src={href} style={[styles.contactItem, styles.link]}>
+      <Link src={href.trim()} style={[styles.contactItem, styles.link]}>
         {children}
       </Link>
     );
@@ -311,6 +318,7 @@ function ContactItem({ children, href }) {
 }
 
 function shortenUrl(url) {
+  if (!url || typeof url !== "string") return "";
   return url
     .replace(/^https?:\/\//, "")
     .replace(/^www\./, "")
@@ -323,6 +331,87 @@ export function ResumeDocument({ user, version, title }) {
 
   const displayName = basics.name?.trim() || user?.name || "Your Name";
   const displayEmail = basics.email?.trim() || user?.email || "";
+  const displayTitle = basics.title?.trim() || "";
+  const displayLocation = basics.location?.trim() || "";
+  const displayPhone = basics.phone?.trim() || "";
+
+  // Normalize contact links
+  const contactLinks = (Array.isArray(basics.links) ? basics.links : [])
+    .map((l) => {
+      if (!l) return null;
+      if (typeof l === "string") return { label: shortenUrl(l), url: l };
+      const url = l.url || "";
+      const label = l.label || shortenUrl(url);
+      return url ? { label, url } : null;
+    })
+    .filter(Boolean);
+
+  // Normalize experience
+  const experienceList = (Array.isArray(p.experience) ? p.experience : []).filter(Boolean);
+
+  // Normalize education
+  const educationList = (Array.isArray(p.education) ? p.education : []).filter(Boolean);
+
+  // Normalize projects
+  const projectsList = (Array.isArray(p.projects) ? p.projects : [])
+    .filter(Boolean)
+    .map((proj) => {
+      let techText = "";
+      if (Array.isArray(proj.tech)) {
+        techText = proj.tech.filter(Boolean).join(" · ");
+      } else if (typeof proj.tech === "string") {
+        techText = proj.tech;
+      }
+
+      let links = [];
+      if (typeof proj.links === "string" && proj.links.trim()) {
+        links = [{ label: shortenUrl(proj.links), url: proj.links.trim() }];
+      } else if (Array.isArray(proj.links)) {
+        links = proj.links
+          .map((l) => {
+            if (typeof l === "string" && l.trim()) return { label: shortenUrl(l), url: l.trim() };
+            if (l && typeof l === "object" && l.url) {
+              return { label: l.label || shortenUrl(l.url), url: l.url };
+            }
+            return null;
+          })
+          .filter(Boolean);
+      }
+
+      return {
+        ...proj,
+        name: proj.name || proj.title || "Project",
+        techText,
+        links,
+      };
+    });
+
+  // Normalize skills
+  const skillsList = (Array.isArray(p.skills) ? p.skills : [])
+    .map((s) => (typeof s === "string" ? s.trim() : s?.name || ""))
+    .filter(Boolean);
+
+  // Normalize certifications
+  const certificationsList = (Array.isArray(p.certifications) ? p.certifications : [])
+    .map((c) => {
+      if (!c) return null;
+      if (typeof c === "string") return { name: c, issuer: "", year: "" };
+      return {
+        name: c.name || "",
+        issuer: c.issuer || "",
+        year: c.year || "",
+      };
+    })
+    .filter((c) => Boolean(c?.name));
+
+  // Normalize languages & interests
+  const languagesList = (Array.isArray(p.languages) ? p.languages : [])
+    .map((l) => (typeof l === "string" ? l.trim() : ""))
+    .filter(Boolean);
+
+  const interestsList = (Array.isArray(p.interests) ? p.interests : [])
+    .map((i) => (typeof i === "string" ? i.trim() : ""))
+    .filter(Boolean);
 
   return (
     <Document title={title || displayName || "Resume"} author={displayName}>
@@ -330,23 +419,23 @@ export function ResumeDocument({ user, version, title }) {
         {/* Header */}
         <View style={styles.headerWrap}>
           <Text style={styles.name}>{displayName}</Text>
-          {basics.title ? (
-            <Text style={styles.title}>{basics.title}</Text>
+          {displayTitle ? (
+            <Text style={styles.title}>{displayTitle}</Text>
           ) : null}
 
           <View style={styles.contactRow}>
-            {basics.location ? (
-              <ContactItem>{basics.location}</ContactItem>
+            {displayLocation ? (
+              <ContactItem>{displayLocation}</ContactItem>
             ) : null}
             {displayEmail ? (
               <ContactItem href={`mailto:${displayEmail}`}>
                 {displayEmail}
               </ContactItem>
             ) : null}
-            {basics.phone ? <ContactItem>{basics.phone}</ContactItem> : null}
-            {(basics.links || []).map((l, i) => (
+            {displayPhone ? <ContactItem>{displayPhone}</ContactItem> : null}
+            {contactLinks.map((l, i) => (
               <ContactItem key={i} href={l.url}>
-                {l.label || shortenUrl(l.url || "")}
+                {l.label}
               </ContactItem>
             ))}
           </View>
@@ -355,62 +444,65 @@ export function ResumeDocument({ user, version, title }) {
         </View>
 
         {/* Summary */}
-        {p.summary ? (
+        {p.summary?.trim() ? (
           <View style={styles.section}>
             <SectionHeader>Summary</SectionHeader>
-            <Text style={styles.summary}>{p.summary}</Text>
+            <Text style={styles.summary}>{p.summary.trim()}</Text>
           </View>
         ) : null}
 
         {/* Experience */}
-        {p.experience?.length > 0 ? (
+        {experienceList.length > 0 ? (
           <View style={styles.section}>
             <SectionHeader>Experience</SectionHeader>
-            {p.experience.map((exp, i) => (
-              <View key={i} style={styles.expItem} wrap={false}>
-                <View style={styles.expHeader}>
-                  <Text style={styles.expRole}>{exp.role || "Role"}</Text>
-                  {exp.period ? (
-                    <Text style={styles.expPeriod}>{exp.period}</Text>
-                  ) : null}
-                </View>
-                {(exp.company || exp.location) && (
-                  <Text style={styles.expCompanyLine}>
-                    {exp.company ? (
-                      <Text style={styles.expCompany}>{exp.company}</Text>
+            {experienceList.map((exp, i) => {
+              const companyLoc = [exp.company, exp.location].filter(Boolean).join("  ·  ");
+              return (
+                <View key={i} style={styles.expItem} wrap={false}>
+                  <View style={styles.expHeader}>
+                    <Text style={styles.expRole}>{exp.role || "Role"}</Text>
+                    {exp.period ? (
+                      <Text style={styles.expPeriod}>{exp.period}</Text>
                     ) : null}
-                    {exp.company && exp.location ? "  ·  " : ""}
-                    {exp.location || ""}
-                  </Text>
-                )}
-                {(exp.bullets || []).map((b, j) => (
-                  <Bullet key={j}>{b}</Bullet>
-                ))}
-              </View>
-            ))}
+                  </View>
+                  {companyLoc ? (
+                    <Text style={styles.expCompanyLine}>
+                      {exp.company ? (
+                        <Text style={styles.expCompany}>{exp.company}</Text>
+                      ) : null}
+                      {exp.company && exp.location ? "  ·  " : ""}
+                      {exp.location || ""}
+                    </Text>
+                  ) : null}
+                  {(Array.isArray(exp.bullets) ? exp.bullets : []).map((b, j) => (
+                    <Bullet key={j}>{b}</Bullet>
+                  ))}
+                </View>
+              );
+            })}
           </View>
         ) : null}
 
         {/* Projects */}
-        {p.projects?.length > 0 ? (
+        {projectsList.length > 0 ? (
           <View style={styles.section}>
             <SectionHeader>Projects</SectionHeader>
-            {p.projects.map((proj, i) => (
+            {projectsList.map((proj, i) => (
               <View key={i} style={styles.projItem} wrap={false}>
                 <View style={styles.projHeader}>
                   <Text style={styles.projName}>{proj.name}</Text>
-                  {proj.tech?.length ? (
-                    <Text style={styles.projTech}>{proj.tech.join(" · ")}</Text>
+                  {proj.techText ? (
+                    <Text style={styles.projTech}>{proj.techText}</Text>
                   ) : null}
                 </View>
                 {proj.description ? (
                   <Text style={styles.projDesc}>{proj.description}</Text>
                 ) : null}
-                {proj.links?.length ? (
+                {proj.links.length > 0 ? (
                   <View style={styles.projLinks}>
                     {proj.links.map((l, j) => (
                       <Link key={j} src={l.url} style={styles.projLink}>
-                        {l.label || shortenUrl(l.url || "")}
+                        {l.label}
                       </Link>
                     ))}
                   </View>
@@ -421,20 +513,20 @@ export function ResumeDocument({ user, version, title }) {
         ) : null}
 
         {/* Education */}
-        {p.education?.length > 0 ? (
+        {educationList.length > 0 ? (
           <View style={styles.section}>
             <SectionHeader>Education</SectionHeader>
-            {p.education.map((edu, i) => (
+            {educationList.map((edu, i) => (
               <View key={i} style={styles.eduItem} wrap={false}>
                 <View style={styles.eduRow}>
-                  <Text style={styles.eduDegree}>{edu.degree}</Text>
+                  <Text style={styles.eduDegree}>{edu.degree || "Degree"}</Text>
                   {edu.period ? (
                     <Text style={styles.eduMeta}>{edu.period}</Text>
                   ) : null}
                 </View>
                 <Text style={styles.eduSchool}>
-                  {edu.school}
-                  {edu.location ? ` · ${edu.location}` : ""}
+                  {edu.school || ""}
+                  {edu.school && edu.location ? ` · ${edu.location}` : edu.location || ""}
                 </Text>
                 {edu.details ? (
                   <Text style={[styles.eduMeta, { marginTop: 2 }]}>
@@ -447,11 +539,11 @@ export function ResumeDocument({ user, version, title }) {
         ) : null}
 
         {/* Skills */}
-        {p.skills?.length > 0 ? (
+        {skillsList.length > 0 ? (
           <View style={styles.section}>
             <SectionHeader>Skills</SectionHeader>
             <View style={styles.skillsGrid}>
-              {p.skills.map((s, i) => (
+              {skillsList.map((s, i) => (
                 <Text key={i} style={styles.skillChip}>
                   {s}
                 </Text>
@@ -461,10 +553,10 @@ export function ResumeDocument({ user, version, title }) {
         ) : null}
 
         {/* Certifications */}
-        {p.certifications?.length > 0 ? (
+        {certificationsList.length > 0 ? (
           <View style={styles.section}>
             <SectionHeader>Certifications</SectionHeader>
-            {p.certifications.map((c, i) => (
+            {certificationsList.map((c, i) => (
               <View key={i} style={styles.certItem} wrap={false}>
                 <Text>
                   <Text style={styles.certName}>{c.name}</Text>
@@ -479,40 +571,40 @@ export function ResumeDocument({ user, version, title }) {
         ) : null}
 
         {/* Languages + Interests two-column */}
-        {(p.languages?.length > 0 || p.interests?.length > 0) && (
+        {(languagesList.length > 0 || interestsList.length > 0) ? (
           <View style={[styles.section, styles.twoCol]}>
-            {p.languages?.length > 0 && (
+            {languagesList.length > 0 ? (
               <View style={styles.colHalf}>
                 <SectionHeader>Languages</SectionHeader>
                 <View style={styles.pillLine}>
-                  {p.languages.map((l, i) => (
+                  {languagesList.map((l, i) => (
                     <Text key={i} style={styles.pill}>
                       {l}
                     </Text>
                   ))}
                 </View>
               </View>
-            )}
-            {p.interests?.length > 0 && (
+            ) : null}
+            {interestsList.length > 0 ? (
               <View style={styles.colHalf}>
                 <SectionHeader>Interests</SectionHeader>
                 <View style={styles.pillLine}>
-                  {p.interests.map((l, i) => (
+                  {interestsList.map((l, i) => (
                     <Text key={i} style={styles.pill}>
                       {l}
                     </Text>
                   ))}
                 </View>
               </View>
-            )}
+            ) : null}
           </View>
-        )}
+        ) : null}
 
         <View style={styles.footer} fixed>
           <Text>{displayName}</Text>
           <Text
             render={({ pageNumber, totalPages }) =>
-              `${pageNumber} / ${totalPages}`
+              totalPages ? `${pageNumber} / ${totalPages}` : `${pageNumber}`
             }
           />
         </View>

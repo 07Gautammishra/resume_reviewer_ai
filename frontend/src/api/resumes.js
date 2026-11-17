@@ -20,7 +20,38 @@ export const resumesApi = {
       .then((r) => r.data);
   },
 
-  createSample: () => apiClient.post("/resumes/sample").then((r) => r.data),
+  createSample: async () => {
+    try {
+      return await apiClient.post("/resumes/sample").then((r) => r.data);
+    } catch (err) {
+      // Graceful fallback: If backend endpoint /sample is not yet live (404),
+      // generate the sample PDF client-side and upload via standard /resumes endpoint.
+      if (err?.status === 404) {
+        const { pdf } = await import("@react-pdf/renderer");
+        const { createElement } = await import("react");
+        const { ResumeDocument } = await import("@/components/export/ResumeDocument");
+        const { sampleDemoSections } = await import("./sampleData");
+
+        const element = createElement(ResumeDocument, {
+          version: { parsedSections: sampleDemoSections },
+          title: "Alex Mercer - Senior Full Stack Engineer (Demo)",
+        });
+
+        const blob = await pdf(element).toBlob();
+        const file = new File(
+          [blob],
+          "Alex_Mercer_Senior_Full_Stack_Engineer_Demo.pdf",
+          { type: "application/pdf" }
+        );
+
+        return await resumesApi.upload(
+          file,
+          "Alex Mercer - Senior Full Stack Engineer (Demo)"
+        );
+      }
+      throw err;
+    }
+  },
   
   remove: (id) => apiClient.delete(`/resumes/${id}`).then((r) => r.data),
   

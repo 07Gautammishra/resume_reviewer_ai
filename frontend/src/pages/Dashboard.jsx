@@ -6,6 +6,7 @@ import {
   KeyRound,
   UploadCloud,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ScoreEvolutionChart } from "@/components/dashboard/ScoreEvolutionChart";
@@ -25,11 +26,24 @@ import {
 } from "@/components/ui/Card";
 import { useAuth } from "@/context/AuthContext";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useCreateSampleResume } from "@/hooks/useResumes";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const nav = useNavigate();
   const { data, isLoading, error } = useDashboard();
+  const createSample = useCreateSampleResume();
+
+  const handleLoadSample = async () => {
+    try {
+      const res = await createSample.mutateAsync();
+      if (res?.resume?._id) {
+        nav(`/resumes/${res.resume._id}`, { state: { autoAnalyze: true } });
+      }
+    } catch {
+      // Error handled by hook toast
+    }
+  };
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -53,9 +67,35 @@ export default function Dashboard() {
         title="Welcome — let's scan your resume"
         description="Upload a PDF to get an instant ATS score, fixable issues, your strengths, and AI-rewritten bullets."
         action={
-          <Button variant="accent" size="lg" className="shadow-md" onClick={() => nav("/resumes")}>
-            Upload your first resume
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto">
+            <Button
+              variant="accent"
+              size="lg"
+              className="w-full sm:w-auto shadow-md"
+              onClick={() => nav("/resumes")}
+            >
+              Upload your first resume
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto"
+              disabled={createSample.isPending}
+              onClick={handleLoadSample}
+            >
+              {createSample.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating Demo...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2 text-[var(--accent)]" />
+                  Explore with Demo Resume
+                </>
+              )}
+            </Button>
+          </div>
         }
       />
     );

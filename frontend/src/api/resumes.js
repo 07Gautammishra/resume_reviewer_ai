@@ -19,6 +19,8 @@ export const resumesApi = {
       .post("/resumes", fd, { headers: { "Content-Type": "multipart/form-data" } })
       .then((r) => r.data);
   },
+
+  createSample: () => apiClient.post("/resumes/sample").then((r) => r.data),
   
   remove: (id) => apiClient.delete(`/resumes/${id}`).then((r) => r.data),
   

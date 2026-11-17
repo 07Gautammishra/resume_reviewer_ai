@@ -12,6 +12,7 @@ import {
   rewriteBodySchema,
   diffQuerySchema,
   createResume,
+  createSampleResume,
   getAllResumes,
   getResumeById,
   getResumeVersion,
@@ -28,6 +29,8 @@ const router = express.Router();
 router.use(AuthMiddleware);
 
 // Resume CRUD & Versions
+router.post("/sample", createSampleResume);
+
 router.route("/")
   .post(uploadPdf("file"), createResume)
   .get(getAllResumes);

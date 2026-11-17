@@ -100,7 +100,7 @@ const resumeVersionSchema = new mongoose.Schema(
         },
         sourceType: {
             type: String,
-            enum: ["upload", "rewrite"],
+            enum: ["upload", "rewrite", "sample"],
             required: true,
         },
         parentVersionId: {

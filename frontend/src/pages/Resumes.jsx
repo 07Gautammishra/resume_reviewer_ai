@@ -1,19 +1,32 @@
 import { useNavigate } from "react-router-dom";
-import { FileText } from "lucide-react";
+import { FileText, Sparkles, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardTitle, CardDescription, CardHeader } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { UploadDropzone } from "@/components/resume/UploadDropzone";
 import { ResumeRow } from "@/components/resume/ResumeRow";
-import { useResumesList } from "@/hooks/useResumes";
+import { useResumesList, useCreateSampleResume } from "@/hooks/useResumes";
 
 export default function Resumes() {
   const nav = useNavigate();
   const { data: resumes, isLoading } = useResumesList();
+  const createSample = useCreateSampleResume();
 
   function handleUploaded(resume) {
     nav(`/resumes/${resume._id}`, { state: { autoAnalyze: true } });
+  }
+
+  async function handleLoadSample() {
+    try {
+      const res = await createSample.mutateAsync();
+      if (res?.resume?._id) {
+        nav(`/resumes/${res.resume._id}`, { state: { autoAnalyze: true } });
+      }
+    } catch {
+      // Error handled by hook toast
+    }
   }
 
   return (
@@ -52,6 +65,26 @@ export default function Resumes() {
               icon={FileText}
               title="No resumes yet"
               description="Drop your first PDF on the left to get started — we'll parse it, score it, and suggest stronger bullets."
+              action={
+                <Button
+                  variant="outline"
+                  size="md"
+                  disabled={createSample.isPending}
+                  onClick={handleLoadSample}
+                >
+                  {createSample.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading Demo...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2 text-[var(--accent)]" />
+                      Explore with Demo Resume
+                    </>
+                  )}
+                </Button>
+              }
             />
           )}
 

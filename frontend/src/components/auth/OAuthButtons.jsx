@@ -67,6 +67,10 @@ export function OAuthButtons() {
 
   const handleOAuthClick = (provider) => {
     setLoadingProvider(provider);
+    // Safety fallback: if navigation is cancelled or back navigation occurs without full reload
+    setTimeout(() => {
+      setLoadingProvider(null);
+    }, 6000);
     window.location.href = `${apiBase}/auth/${provider}`;
   };
 

@@ -68,6 +68,23 @@ export function useUploadResume() {
   });
 }
 
+export function useCreateSampleResume() {
+  const qc = useQueryClient();
+  const toast = useToast();
+  return useMutation({
+    mutationFn: () => resumesApi.createSample(),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: resumeKeys.list() });
+      qc.invalidateQueries({ queryKey: dashboardKey });
+      toast.success(
+        "Demo Resume loaded",
+        `${data?.resume?.title || "Demo Resume"} · ready for review & ATS scoring`
+      );
+    },
+    onError: (e) => toast.error("Could not load demo resume", e?.message),
+  });
+}
+
 export function useAnalyzeResume(id) {
   const qc = useQueryClient();
   const toast = useToast();
